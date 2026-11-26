@@ -1613,7 +1613,7 @@
             </ul>
           </div>
           <div class="module-links">
-            <button type="button" class="action-link" onclick="selectLogicTab('leavebehind')">
+            <button type="button" class="action-link" onclick="selectLogicTab('leavebehind', true)">
               View Leave-Behind Business Rules &amp; Logic <span aria-hidden="true">→</span>
             </button>
           </div>
@@ -2216,7 +2216,7 @@ NoSupPerf = Table.SelectRows(FilteredVisit,
       }
     };
 
-    function selectLogicTab(key) {
+    function selectLogicTab(key, shouldScroll = false) {
       const item = LOGIC_ITEMS[key];
       document.getElementById("logicTitle").textContent = item.title;
       document.getElementById("logicProblem").textContent = item.problem;
@@ -2230,10 +2230,8 @@ NoSupPerf = Table.SelectRows(FilteredVisit,
         btn.classList.toggle("active", btn.dataset.logic === key);
       });
 
-      const sec = document.getElementById("system-logic");
-      const rect = sec.getBoundingClientRect();
-      if (rect.top < -250 || rect.top > window.innerHeight * 0.7) {
-        sec.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (shouldScroll) {
+        document.getElementById("system-logic").scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
 
@@ -2276,7 +2274,8 @@ NoSupPerf = Table.SelectRows(FilteredVisit,
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
-            revealObserver.unobserve(entry.target);
+          } else if (entry.boundingClientRect.top > 0) {
+            entry.target.classList.remove("is-visible");
           }
         });
       }, { threshold: 0.08, rootMargin: "0px 0px -36px 0px" });
