@@ -1,0 +1,73 @@
+// =====================================================================================
+// STAFF ACTION MEASURES
+// Paste this whole file into DAX query view, click "Update model with changes", then Run.
+// Needs the StaffActions table to be loaded first.
+// =====================================================================================
+DEFINE
+
+    // ----------------------------- STAFF ACTIONS (needs StaffActions table) -----------------------------
+    // "+ 0" makes the cards show 0 instead of (Blank) when nothing matches.
+    MEASURE StaffActions[Tracked Actions] = COUNTROWS ( StaffActions ) + 0
+    MEASURE StaffActions[Open Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Closed] = FALSE () ) ) + 0
+    MEASURE StaffActions[Closed Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Closed] = TRUE () ) ) + 0
+    MEASURE StaffActions[Closed %] = DIVIDE ( [Closed Actions], [Tracked Actions] )
+    MEASURE StaffActions[Awaiting First Update] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Update Status] = "Awaiting First Update" ) ) + 0
+    MEASURE StaffActions[Stale Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Update Status] = "Stale (30+ Days)" ) ) + 0
+    MEASURE StaffActions[Unassigned Actions] =
+        CALCULATE ( [Open Actions], KEEPFILTERS ( StaffActions[Office Symbol] = "Unassigned" ) ) + 0
+    MEASURE StaffActions[Uncategorized Actions] =
+        CALCULATE ( [Open Actions], KEEPFILTERS ( StaffActions[Category] = "Not Categorized" ) ) + 0
+    MEASURE StaffActions[Overdue Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Due Status] = "Overdue" ) ) + 0
+    MEASURE StaffActions[Due in 30 Days] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Due Status] = "Due in 30 Days" ) ) + 0
+    MEASURE StaffActions[Avg Days Open] = AVERAGE ( StaffActions[Days Open] )
+    // Flagged for staff action in the master list but not yet copied to the tracker (should be 0)
+    MEASURE StaffActions[Not Yet in Tracker] =
+        MAX (
+            0,
+            CALCULATE ( [Staff Action Items], REMOVEFILTERS () )
+                - CALCULATE ( COUNTROWS ( StaffActions ), REMOVEFILTERS () )
+        )
+    // Cell colors for the tracker table (conditional formatting > Field value)
+    MEASURE StaffActions[Due Status Color] =
+        SWITCH (
+            SELECTEDVALUE ( StaffActions[Due Status] ),
+            "Overdue", "#FECACA",
+            "Due in 30 Days", "#FEF08A",
+            "On Track", "#BBF7D0",
+            "No Target Date", "#E2E8F0",
+            "Closed", "#F1F5F9"
+        )
+    MEASURE StaffActions[Update Status Color] =
+        SWITCH (
+            SELECTEDVALUE ( StaffActions[Update Status] ),
+            "Awaiting First Update", "#FED7AA",
+            "Stale (30+ Days)", "#FEF08A",
+            "Current", "#BBF7D0",
+            "Closed", "#F1F5F9"
+        )
+    MEASURE StaffActions[BLUF 4 Staff Actions] =
+        FORMAT ( [Tracked Actions], "#,0" ) & " staff action items tracked: "
+            & FORMAT ( [Open Actions], "#,0" ) & " open, "
+            & FORMAT ( [Overdue Actions], "#,0" ) & " past target date, "
+            & FORMAT ( [Awaiting First Update], "#,0" ) & " awaiting a first POC update, "
+            & FORMAT ( [Unassigned Actions], "#,0" ) & " with no office assigned."
+
+EVALUATE
+ROW (
+    "Tracked", [Tracked Actions],
+    "Open", [Open Actions],
+    "Closed", [Closed Actions],
+    "Awaiting First Update", [Awaiting First Update],
+    "Unassigned", [Unassigned Actions],
+    "Overdue", [Overdue Actions],
+    "Due in 30 Days", [Due in 30 Days],
+    "Avg Days Open", [Avg Days Open],
+    "Not Yet in Tracker", [Not Yet in Tracker],
+    "BLUF4", [BLUF 4 Staff Actions]
+)

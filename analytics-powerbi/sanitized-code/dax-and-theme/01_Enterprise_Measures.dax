@@ -1,0 +1,281 @@
+// =====================================================================================
+// LATT Enterprise Dashboard - DAX measures
+// -------------------------------------------------------------------------------------
+// HOW TO USE (Power BI Desktop, after the Power Query tables are loaded and the
+// relationships in 04_Build_Guide.md step 3 are created):
+//   1. Open DAX query view (left rail, 4th icon).
+//   2. Paste this whole file, then click "Update model with changes" (top of editor).
+//      All measures are added at once. Then press Run to see the test results at the bottom.
+//   3. If you have not created the StaffActions table yet, delete the measures in the
+//      "STAFF ACTIONS" block first (they reference that table), including BLUF 4 at its end.
+// =====================================================================================
+DEFINE
+
+    // ----------------------------- CORE COUNTS -----------------------------
+    MEASURE Observations[Total Observations] = COUNTROWS ( Observations )
+    MEASURE Observations[Deficiencies] =
+        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Is Positive] = FALSE () ) )
+    MEASURE Observations[Strengths] =
+        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Is Positive] = TRUE () ) )
+    MEASURE Observations[Priority Items] =
+        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Is Priority] = TRUE () ) )
+    MEASURE Observations[Priority %] = DIVIDE ( [Priority Items], [Deficiencies] )
+    MEASURE Observations[Compliance Findings] =
+        CALCULATE (
+            [Deficiencies],
+            KEEPFILTERS ( Observations[Compliance] = TRUE () )
+        )
+    MEASURE Observations[Compliance %] = DIVIDE ( [Compliance Findings], [Deficiencies] )
+    MEASURE Observations[Safety Flags] =
+        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Safety] = TRUE () ) )
+    MEASURE Observations[High Impact] =
+        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Operational Impact] = "High" ) )
+    MEASURE Observations[Staff Action Items] =
+        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Staff Action] = TRUE () ) )
+    MEASURE Observations[Unreviewed] =
+        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Reviewed] = FALSE () ) )
+
+    // ------------------------- NORMALIZED (per assessment) -------------------------
+    // Use these for trend lines and cross-function comparisons so bigger visits don't dominate.
+    MEASURE Observations[Assessments] = DISTINCTCOUNT ( Observations[Assessment] )
+    MEASURE Observations[Observations per Assessment] = DIVIDE ( [Total Observations], [Assessments] )
+    MEASURE Observations[Deficiencies per Assessment] = DIVIDE ( [Deficiencies], [Assessments] )
+    MEASURE Observations[Priority per Assessment] = DIVIDE ( [Priority Items], [Assessments] )
+
+    // ----------------------------- ROOT CAUSE PARETO -----------------------------
+    // Excludes "Not Classified" so blanks don't show up as a root cause.
+    MEASURE Observations[Classified Deficiencies] =
+        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Finding Type] <> "Not Classified" ) )
+    MEASURE Observations[Pareto Total] =
+        CALCULATE ( [Classified Deficiencies], ALLSELECTED ( Observations[Finding Type] ) )
+    MEASURE Observations[Pareto Share] = DIVIDE ( [Classified Deficiencies], [Pareto Total] )
+    MEASURE Observations[Pareto Cumulative %] =
+        VAR CurName = SELECTEDVALUE ( Observations[Finding Type] )
+        VAR CurCnt = [Classified Deficiencies]
+        VAR Tbl =
+            ADDCOLUMNS ( ALLSELECTED ( Observations[Finding Type] ), "@c", [Classified Deficiencies] )
+        VAR Cum =
+            SUMX (
+                FILTER ( Tbl, [@c] > CurCnt || ( [@c] = CurCnt && Observations[Finding Type] <= CurName ) ),
+                [@c]
+            )
+        RETURN
+            IF ( CurCnt > 0, DIVIDE ( Cum, [Pareto Total] ) )
+    // 1 = part of the "vital few" (cumulative share before this bar was under 80%)
+    MEASURE Observations[Pareto Core] =
+        IF ( NOT ISBLANK ( [Pareto Cumulative %] ), IF ( [Pareto Cumulative %] - [Pareto Share] < 0.8, 1, 0 ) )
+    MEASURE Observations[Pareto Bar Color] = IF ( [Pareto Core] = 1, "#1D4ED8", "#94A3B8" )
+    // Flat 80% reference line for the Pareto chart (add to Line y-axis)
+    MEASURE Observations[Pareto 80% Line] = 0.8
+
+    // ----------------------------- RISK MATRIX -----------------------------
+    MEASURE Observations[Risk Matrix Count] = COALESCE ( [Deficiencies], 0 )
+    MEASURE Observations[Risk Cell Color] =
+        VAR p = SELECTEDVALUE ( Observations[Probability] )
+        VAR s = SELECTEDVALUE ( Observations[Severity] )
+        VAR lvl =
+            SWITCH (
+                TRUE (),
+                // Matches the LATT Operational Impact Matrix: 1 = High, 2 = Moderate, 3 = Low
+                s = "Severe" && p IN { "Frequent", "Likely", "Occasional" }, 1,
+                s = "Significant" && p = "Frequent", 1,
+                s = "Severe", 2,
+                s = "Significant" && p IN { "Likely", "Occasional" }, 2,
+                s = "Limited" && p IN { "Frequent", "Likely" }, 2,
+                s IN { "Significant", "Limited", "Minimal" }, 3
+            )
+        RETURN
+            SWITCH ( lvl, 1, "#FECACA", 2, "#FEF08A", 3, "#BBF7D0" )
+
+    // ----------------------------- THEMES & REFERENCES -----------------------------
+    // Themes overlap (one observation can hit several), so shares won't sum to 100%.
+    MEASURE Observations[Theme Share] =
+        DIVIDE ( [Total Observations], CALCULATE ( [Total Observations], REMOVEFILTERS ( ObservationThemes ) ) )
+    MEASURE Observations[Citing Observations] = DISTINCTCOUNT ( ObservationReferences[ItemID] )
+    MEASURE Observations[Top Root Cause] =
+        VAR t =
+            TOPN (
+                1,
+                FILTER (
+                    ADDCOLUMNS ( VALUES ( Observations[Finding Type] ), "@n", [Classified Deficiencies] ),
+                    [@n] > 0
+                ),
+                [@n], DESC,
+                Observations[Finding Type], ASC
+            )
+        RETURN
+            MAXX ( t, Observations[Finding Type] )
+    MEASURE Observations[Top Section] =
+        VAR t =
+            TOPN (
+                1,
+                FILTER (
+                    ADDCOLUMNS ( VALUES ( Observations[Section] ), "@n", [Total Observations] ),
+                    [@n] > 0 && Observations[Section] <> "Not Assigned"
+                ),
+                [@n], DESC,
+                Observations[Section], ASC
+            )
+        RETURN
+            MAXX ( t, Observations[Section] & " (" & [@n] & ")" )
+
+    // ----------------------------- BLUF TEXT (dynamic, follows slicers) -----------------------------
+    MEASURE Observations[Top 2 Functions] =
+        VAR t =
+            TOPN (
+                2,
+                FILTER (
+                    ADDCOLUMNS ( VALUES ( Observations[Function] ), "@n", [Deficiencies] ),
+                    [@n] > 0 && Observations[Function] <> "Not Assigned"
+                ),
+                [@n], DESC,
+                Observations[Function], ASC
+            )
+        RETURN
+            CONCATENATEX ( t, Observations[Function] & " (" & [@n] & ")", " and ", [@n], DESC )
+    MEASURE Observations[Top 2 Sections] =
+        VAR t =
+            TOPN (
+                2,
+                FILTER (
+                    ADDCOLUMNS ( VALUES ( Observations[Section] ), "@n", [Deficiencies] ),
+                    [@n] > 0 && Observations[Section] <> "Not Assigned"
+                ),
+                [@n], DESC,
+                Observations[Section], ASC
+            )
+        RETURN
+            CONCATENATEX ( t, Observations[Section] & " (" & [@n] & ")", " and ", [@n], DESC )
+    MEASURE Observations[Top 2 Root Causes] =
+        VAR t =
+            TOPN (
+                2,
+                FILTER ( ADDCOLUMNS ( VALUES ( Observations[Finding Type] ), "@n", [Classified Deficiencies] ), [@n] > 0 ),
+                [@n], DESC,
+                Observations[Finding Type], ASC
+            )
+        RETURN
+            CONCATENATEX ( t, Observations[Finding Type] & " (" & [@n] & ")", " and ", [@n], DESC )
+    MEASURE Observations[Top 2 Root Causes Share] =
+        VAR t =
+            TOPN (
+                2,
+                FILTER ( ADDCOLUMNS ( VALUES ( Observations[Finding Type] ), "@n", [Classified Deficiencies] ), [@n] > 0 ),
+                [@n], DESC,
+                Observations[Finding Type], ASC
+            )
+        RETURN
+            DIVIDE ( SUMX ( t, [@n] ), [Classified Deficiencies] )
+
+    MEASURE Observations[BLUF 1 Concentration] =
+        "Deficiencies are most concentrated in " & [Top 2 Functions]
+            & ", led at the workcenter level by " & [Top 2 Sections] & "."
+    MEASURE Observations[BLUF 2 Root Cause] =
+        "Leading root causes: " & [Top 2 Root Causes] & ", together "
+            & FORMAT ( [Top 2 Root Causes Share], "0%" ) & " of classified deficiencies."
+    MEASURE Observations[BLUF 3 Risk] =
+        FORMAT ( [Priority Items], "#,0" ) & " deficiencies (" & FORMAT ( [Priority %], "0.0%" )
+            & ") carry a safety flag, Severe severity, or High operational impact; "
+            & FORMAT ( [Compliance %], "0%" ) & " are compliance findings."
+
+    // Latest fiscal year in the current selection vs. the one before it, per assessment.
+    MEASURE Observations[Latest FY] = MAXX ( Observations, RELATED ( 'Date'[Fiscal Year] ) )
+    MEASURE Observations[Def per Assessment Latest FY] =
+        VAR fy = [Latest FY]
+        RETURN CALCULATE ( [Deficiencies per Assessment], REMOVEFILTERS ( 'Date' ), 'Date'[Fiscal Year] = fy )
+    MEASURE Observations[Def per Assessment Prior FY] =
+        VAR fy = [Latest FY]
+        RETURN CALCULATE ( [Deficiencies per Assessment], REMOVEFILTERS ( 'Date' ), 'Date'[Fiscal Year] = fy - 1 )
+    MEASURE Observations[BLUF 5 Trend] =
+        VAR fy = [Latest FY]
+        VAR cur = [Def per Assessment Latest FY]
+        VAR prv = [Def per Assessment Prior FY]
+        RETURN
+            IF (
+                ISBLANK ( prv ),
+                "FY" & RIGHT ( fy, 2 ) & ": " & FORMAT ( cur, "0.0" ) & " deficiencies per assessment (no prior-year baseline in selection).",
+                "FY" & RIGHT ( fy, 2 ) & ": " & FORMAT ( cur, "0.0" ) & " deficiencies per assessment vs "
+                    & FORMAT ( prv, "0.0" ) & " in FY" & RIGHT ( fy - 1, 2 ) & " ("
+                    & FORMAT ( DIVIDE ( cur - prv, prv ), "+0%;-0%;0%" ) & ")."
+            )
+
+    // ----------------------------- DATA QUALITY -----------------------------
+    MEASURE Observations[Records With DQ Issues] =
+        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[DQ Issue Count] > 0 ) )
+    MEASURE Observations[DQ Issue %] = DIVIDE ( [Records With DQ Issues], [Total Observations] )
+
+    // ----------------------------- STAFF ACTIONS (needs StaffActions table) -----------------------------
+    // "+ 0" makes the cards show 0 instead of (Blank) when nothing matches.
+    MEASURE StaffActions[Tracked Actions] = COUNTROWS ( StaffActions ) + 0
+    MEASURE StaffActions[Open Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Closed] = FALSE () ) ) + 0
+    MEASURE StaffActions[Closed Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Closed] = TRUE () ) ) + 0
+    MEASURE StaffActions[Closed %] = DIVIDE ( [Closed Actions], [Tracked Actions] )
+    MEASURE StaffActions[Awaiting First Update] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Update Status] = "Awaiting First Update" ) ) + 0
+    MEASURE StaffActions[Stale Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Update Status] = "Stale (30+ Days)" ) ) + 0
+    MEASURE StaffActions[Unassigned Actions] =
+        CALCULATE ( [Open Actions], KEEPFILTERS ( StaffActions[Office Symbol] = "Unassigned" ) ) + 0
+    MEASURE StaffActions[Uncategorized Actions] =
+        CALCULATE ( [Open Actions], KEEPFILTERS ( StaffActions[Category] = "Not Categorized" ) ) + 0
+    MEASURE StaffActions[Overdue Actions] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Due Status] = "Overdue" ) ) + 0
+    MEASURE StaffActions[Due in 30 Days] =
+        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Due Status] = "Due in 30 Days" ) ) + 0
+    MEASURE StaffActions[Avg Days Open] = AVERAGE ( StaffActions[Days Open] )
+    // Flagged for staff action in the master list but not yet copied to the tracker (should be 0)
+    MEASURE StaffActions[Not Yet in Tracker] =
+        MAX (
+            0,
+            CALCULATE ( [Staff Action Items], REMOVEFILTERS () )
+                - CALCULATE ( COUNTROWS ( StaffActions ), REMOVEFILTERS () )
+        )
+    // Cell colors for the tracker table (conditional formatting > Field value)
+    MEASURE StaffActions[Due Status Color] =
+        SWITCH (
+            SELECTEDVALUE ( StaffActions[Due Status] ),
+            "Overdue", "#FECACA",
+            "Due in 30 Days", "#FEF08A",
+            "On Track", "#BBF7D0",
+            "No Target Date", "#E2E8F0",
+            "Closed", "#F1F5F9"
+        )
+    MEASURE StaffActions[Update Status Color] =
+        SWITCH (
+            SELECTEDVALUE ( StaffActions[Update Status] ),
+            "Awaiting First Update", "#FED7AA",
+            "Stale (30+ Days)", "#FEF08A",
+            "Current", "#BBF7D0",
+            "Closed", "#F1F5F9"
+        )
+    MEASURE StaffActions[BLUF 4 Staff Actions] =
+        FORMAT ( [Tracked Actions], "#,0" ) & " staff action items tracked: "
+            & FORMAT ( [Open Actions], "#,0" ) & " open, "
+            & FORMAT ( [Overdue Actions], "#,0" ) & " past target date, "
+            & FORMAT ( [Awaiting First Update], "#,0" ) & " awaiting a first POC update, "
+            & FORMAT ( [Unassigned Actions], "#,0" ) & " with no office assigned."
+
+// ----------------------------- QUICK TEST (press Run) -----------------------------
+EVALUATE
+ROW (
+    "Total", [Total Observations],
+    "Deficiencies", [Deficiencies],
+    "Strengths", [Strengths],
+    "Priority", [Priority Items],
+    "Assessments", [Assessments],
+    "BLUF1", [BLUF 1 Concentration],
+    "BLUF2", [BLUF 2 Root Cause],
+    "BLUF3", [BLUF 3 Risk],
+    "BLUF5", [BLUF 5 Trend]
+)
+
+EVALUATE
+ADDCOLUMNS (
+    FILTER ( VALUES ( Observations[Finding Type] ), Observations[Finding Type] <> "Not Classified" ),
+    "Count", [Classified Deficiencies],
+    "Share", [Pareto Share],
+    "Cum", [Pareto Cumulative %]
+)
+ORDER BY [Count] DESC

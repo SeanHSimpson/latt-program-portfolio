@@ -1,0 +1,18 @@
+relationship AutoDetected_2d628583-e14b-41b2-9ea7-c5820ebc56f5
+	crossFilteringBehavior: bothDirections
+	fromColumn: ObservationThemes.ItemID
+	toColumn: Observations.ItemID
+
+relationship AutoDetected_6742cccb-9f55-4675-8b39-c8b09da5ded2
+	crossFilteringBehavior: bothDirections
+	fromColumn: ObservationReferences.ItemID
+	toColumn: Observations.ItemID
+
+relationship 49bb981c-640c-f5c0-729e-0b07c6f4857e
+	fromColumn: Observations.'Date Found'
+	toColumn: Date.Date
+
+relationship 5f3c2a7e-91d4-4b6a-8e0f-2c7d1a9b4e63
+	fromColumn: StaffActions.'Date Found'
+	toColumn: Date.Date
+

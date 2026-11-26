@@ -1,0 +1,1041 @@
+table Observations
+	lineageTag: 9399fa1a-af62-4c5b-87fd-aa54c46052a7
+
+	measure 'Total Observations' = COUNTROWS ( Observations )
+		formatString: 0
+		lineageTag: 8170c33d-792c-4463-ac8c-1ca00c1c49db
+
+	measure Deficiencies = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Is Positive] = FALSE () ) )
+			```
+		formatString: 0
+		lineageTag: dbfd9e52-bf49-425b-adf5-27ff57106fd1
+
+	measure Strengths = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Is Positive] = TRUE () ) )
+			```
+		formatString: 0
+		lineageTag: dedd6279-45ff-4264-a9bc-ed54cbf1d2d1
+
+	measure 'Priority Items' = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Is Priority] = TRUE () ) )
+			```
+		formatString: 0
+		lineageTag: efc78d69-5110-43a5-8f7e-00174d00fe93
+
+	measure 'Priority %' = DIVIDE ( [Priority Items], [Deficiencies] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 11f42b9d-7354-42d0-bdd5-4e8de82f0531
+
+	measure 'Compliance Findings' = ```
+			
+			        CALCULATE (
+			            [Deficiencies],
+			            KEEPFILTERS ( Observations[Compliance] = TRUE () )
+			        )
+			```
+		formatString: 0
+		lineageTag: 2ed3b382-3d16-490a-a2fc-ca9276da4238
+
+	measure 'Compliance %' = DIVIDE ( [Compliance Findings], [Deficiencies] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 2ff9da37-a4fe-420d-9013-d8a441288fca
+
+	measure 'Safety Flags' = ```
+			
+			        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Safety] = TRUE () ) )
+			```
+		formatString: 0
+		lineageTag: f82c4a09-7104-4e0f-b628-576d9710eb59
+
+	measure 'High Impact' = ```
+			
+			        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Operational Impact] = "High" ) )
+			```
+		formatString: 0
+		lineageTag: 81ce4975-4aa6-41c4-88aa-81ad10b38d01
+
+	measure 'Staff Action Items' = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Staff Action] = TRUE () ) )
+			```
+		formatString: 0
+		lineageTag: a5c463c6-066b-43fb-96b1-1f63555bdded
+
+	measure Unreviewed = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Reviewed] = FALSE () ) )
+			```
+		formatString: 0
+		lineageTag: b2c9a749-dea1-4605-bc17-370e04849008
+
+	measure Assessments = DISTINCTCOUNT ( Observations[Assessment] )
+		formatString: 0
+		lineageTag: c2fa13d5-a129-4c6b-bd5b-42e25efe9ad5
+
+	measure 'Observations per Assessment' = DIVIDE ( [Total Observations], [Assessments] )
+		formatString: 0.0
+		lineageTag: fc67425b-c089-40e0-8561-2644d051337b
+
+	measure 'Deficiencies per Assessment' = DIVIDE ( [Deficiencies], [Assessments] )
+		formatString: 0.0
+		lineageTag: b17d8bb3-86ac-4559-b7a8-fb1193f2dfa5
+
+	measure 'Priority per Assessment' = DIVIDE ( [Priority Items], [Assessments] )
+		formatString: 0.0
+		lineageTag: 29cc6e7e-c51c-4160-ad56-93ace7111b33
+
+	measure 'Classified Deficiencies' = ```
+			
+			        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Finding Type] <> "Not Classified" ) )
+			```
+		formatString: 0
+		lineageTag: f9ac34f5-e55d-4c08-9161-d27815c30fc1
+
+	measure 'Pareto Total' = ```
+			
+			        CALCULATE ( [Classified Deficiencies], ALLSELECTED ( Observations[Finding Type] ) )
+			```
+		formatString: 0
+		lineageTag: 53ca27e6-930b-4ce8-a064-cb3a11649f33
+
+	measure 'Pareto Share' = DIVIDE ( [Classified Deficiencies], [Pareto Total] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 33331f51-7d2f-48db-964c-1da568a469a4
+
+	measure 'Pareto Cumulative %' = ```
+			
+			        VAR CurName = SELECTEDVALUE ( Observations[Finding Type] )
+			        VAR CurCnt = [Classified Deficiencies]
+			        VAR Tbl =
+			            ADDCOLUMNS ( ALLSELECTED ( Observations[Finding Type] ), "@c", [Classified Deficiencies] )
+			        VAR Cum =
+			            SUMX (
+			                FILTER ( Tbl, [@c] > CurCnt || ( [@c] = CurCnt && Observations[Finding Type] <= CurName ) ),
+			                [@c]
+			            )
+			        RETURN
+			            IF ( CurCnt > 0, DIVIDE ( Cum, [Pareto Total] ) )
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 5a033970-fc91-414b-a67e-4dec7e4f53f3
+
+	measure 'Pareto Core' = ```
+			
+			        IF ( NOT ISBLANK ( [Pareto Cumulative %] ), IF ( [Pareto Cumulative %] - [Pareto Share] < 0.8, 1, 0 ) )
+			```
+		formatString: 0
+		lineageTag: 9879208a-dbc6-4dbc-a07b-0977a2d0c8be
+
+	measure 'Pareto Bar Color' = IF ( [Pareto Core] = 1, "#1D4ED8", "#94A3B8" )
+		lineageTag: c1d3ca44-324c-4707-ae00-a8ffad950fe7
+
+	measure 'Risk Matrix Count' = COALESCE ( [Deficiencies], 0 )
+		formatString: 0
+		lineageTag: d102b7ae-5301-4995-8b89-2c54962d9195
+
+	measure 'Risk Cell Color' =
+			
+			VAR p = SELECTEDVALUE ( Observations[Probability] )
+			VAR s = SELECTEDVALUE ( Observations[Severity] )
+			VAR lvl =
+			    SWITCH (
+			        TRUE (),
+			        s = "Severe" && p IN { "Frequent", "Likely", "Occasional" }, 1,
+			        s = "Significant" && p = "Frequent", 1,
+			        s = "Severe", 2,
+			        s = "Significant" && p IN { "Likely", "Occasional" }, 2,
+			        s = "Limited" && p IN { "Frequent", "Likely" }, 2,
+			        s IN { "Significant", "Limited", "Minimal" }, 3
+			    )
+			RETURN
+			    SWITCH ( lvl, 1, "#FECACA", 2, "#FEF08A", 3, "#BBF7D0" )
+		lineageTag: eba594c9-db9a-41aa-865b-073c7fc2ccda
+
+	measure 'Theme Share' = ```
+			
+			        DIVIDE ( [Total Observations], CALCULATE ( [Total Observations], REMOVEFILTERS ( ObservationThemes ) ) )
+			```
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 6f0be083-5f83-4f67-91bb-ca2fca5ab3ea
+
+	measure 'Citing Observations' = DISTINCTCOUNT ( ObservationReferences[ItemID] )
+		formatString: 0
+		lineageTag: 4c08e5c6-8052-4f32-85f7-926dcd3a3fd3
+
+	measure 'Top Root Cause' = ```
+			
+			        VAR t =
+			            TOPN (
+			                1,
+			                FILTER (
+			                    ADDCOLUMNS ( VALUES ( Observations[Finding Type] ), "@n", [Classified Deficiencies] ),
+			                    [@n] > 0
+			                ),
+			                [@n], DESC,
+			                Observations[Finding Type], ASC
+			            )
+			        RETURN
+			            MAXX ( t, Observations[Finding Type] )
+			```
+		lineageTag: 820200e9-25f3-407e-9e57-aa18c9511ab6
+
+	measure 'Top Section' = ```
+			
+			        VAR t =
+			            TOPN (
+			                1,
+			                FILTER (
+			                    ADDCOLUMNS ( VALUES ( Observations[Section] ), "@n", [Total Observations] ),
+			                    [@n] > 0 && Observations[Section] <> "Not Assigned"
+			                ),
+			                [@n], DESC,
+			                Observations[Section], ASC
+			            )
+			        RETURN
+			            MAXX ( t, Observations[Section] & " (" & [@n] & ")" )
+			```
+		lineageTag: 37395294-4c5c-4c5f-ad3b-aadf1170c606
+
+	measure 'Top 2 Functions' = ```
+			
+			        VAR t =
+			            TOPN (
+			                2,
+			                FILTER (
+			                    ADDCOLUMNS ( VALUES ( Observations[Function] ), "@n", [Deficiencies] ),
+			                    [@n] > 0 && Observations[Function] <> "Not Assigned"
+			                ),
+			                [@n], DESC,
+			                Observations[Function], ASC
+			            )
+			        RETURN
+			            CONCATENATEX ( t, Observations[Function] & " (" & [@n] & ")", " and ", [@n], DESC )
+			```
+		lineageTag: a0769be2-9ab4-442c-8d8e-4670ddc9d1fb
+
+	measure 'Top 2 Sections' = ```
+			
+			        VAR t =
+			            TOPN (
+			                2,
+			                FILTER (
+			                    ADDCOLUMNS ( VALUES ( Observations[Section] ), "@n", [Deficiencies] ),
+			                    [@n] > 0 && Observations[Section] <> "Not Assigned"
+			                ),
+			                [@n], DESC,
+			                Observations[Section], ASC
+			            )
+			        RETURN
+			            CONCATENATEX ( t, Observations[Section] & " (" & [@n] & ")", " and ", [@n], DESC )
+			```
+		lineageTag: b800903f-5dd8-4c6b-beec-c3e1cabddd2e
+
+	measure 'Top 2 Root Causes' = ```
+			
+			        VAR t =
+			            TOPN (
+			                2,
+			                FILTER ( ADDCOLUMNS ( VALUES ( Observations[Finding Type] ), "@n", [Classified Deficiencies] ), [@n] > 0 ),
+			                [@n], DESC,
+			                Observations[Finding Type], ASC
+			            )
+			        RETURN
+			            CONCATENATEX ( t, Observations[Finding Type] & " (" & [@n] & ")", " and ", [@n], DESC )
+			```
+		lineageTag: 4f555c53-cac2-4954-8fbb-6bf9d060215a
+
+	measure 'Top 2 Root Causes Share' = ```
+			
+			        VAR t =
+			            TOPN (
+			                2,
+			                FILTER ( ADDCOLUMNS ( VALUES ( Observations[Finding Type] ), "@n", [Classified Deficiencies] ), [@n] > 0 ),
+			                [@n], DESC,
+			                Observations[Finding Type], ASC
+			            )
+			        RETURN
+			            DIVIDE ( SUMX ( t, [@n] ), [Classified Deficiencies] )
+			```
+		lineageTag: a3c2c4eb-0256-4502-bd83-3777e351f1da
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'BLUF 1 Concentration' = ```
+			
+			        "Deficiencies are most concentrated in " & [Top 2 Functions]
+			            & ", led at the workcenter level by " & [Top 2 Sections] & "."
+			```
+		lineageTag: 10b1f576-b9b5-4d39-b6ad-9d185984f5f5
+
+	measure 'BLUF 2 Root Cause' = ```
+			
+			        "Leading root causes: " & [Top 2 Root Causes] & ", together "
+			            & FORMAT ( [Top 2 Root Causes Share], "0%" ) & " of classified deficiencies."
+			```
+		lineageTag: 244f2def-eece-4675-a22a-594beac9b91b
+
+	measure 'BLUF 3 Risk' = ```
+			
+			        FORMAT ( [Priority Items], "#,0" ) & " deficiencies (" & FORMAT ( [Priority %], "0.0%" )
+			            & ") carry a safety flag, Severe severity, or High operational impact; "
+			            & FORMAT ( [Policy-Linked %], "0%" ) & " of deficiencies are tied to a published TO or directive."
+			```
+		lineageTag: e6d4aee6-7e6e-4fce-a544-d446329c86b6
+
+	measure 'Latest FY' = MAXX ( Observations, RELATED ( 'Date'[Fiscal Year] ) )
+		formatString: 0
+		lineageTag: c3b9968f-1a7e-491a-97d4-616302e7eda6
+
+	measure 'Def per Assessment Latest FY' = ```
+			
+			        VAR fy = [Latest FY]
+			        RETURN CALCULATE ( [Deficiencies per Assessment], REMOVEFILTERS ( 'Date'[FY Label] ), 'Date'[Fiscal Year] = fy )
+			```
+		lineageTag: 2bb90456-1263-47d2-8bb1-68f3de505a8e
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Def per Assessment Prior FY' = ```
+			
+			        VAR fy = [Latest FY]
+			        RETURN CALCULATE ( [Deficiencies per Assessment], REMOVEFILTERS ( 'Date'[FY Label] ), 'Date'[Fiscal Year] = fy - 1 )
+			```
+		lineageTag: 34f267f2-180c-40d5-8bd2-f754d17a240c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'BLUF 5 Trend' = ```
+			
+			        VAR fy = [Latest FY]
+			        VAR cur = [Def per Assessment Latest FY]
+			        VAR prv = [Def per Assessment Prior FY]
+			        RETURN
+			            IF (
+			                ISBLANK ( prv ),
+			                "FY" & RIGHT ( fy, 2 ) & ": " & FORMAT ( cur, "0.0" ) & " deficiencies per assessment (no prior-year baseline in selection).",
+			                "FY" & RIGHT ( fy, 2 ) & ": " & FORMAT ( cur, "0.0" ) & " deficiencies per assessment vs "
+			                    & FORMAT ( prv, "0.0" ) & " in FY" & RIGHT ( fy - 1, 2 ) & " ("
+			                    & FORMAT ( DIVIDE ( cur - prv, prv ), "+0%;-0%;0%" ) & ")."
+			            )
+			```
+		lineageTag: ffd3a1b4-e043-4da7-9224-54ad78498093
+
+	measure 'Records With DQ Issues' = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[DQ Issue Count] > 0 ) )
+			```
+		formatString: 0
+		lineageTag: d48250a8-372c-4dd8-920c-be007e16e7bb
+
+	measure 'DQ Issue %' = DIVIDE ( [Records With DQ Issues], [Total Observations] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: f0a2a6d1-a760-43e0-a8e7-0882fd56d6ce
+
+	measure 'Pareto 80% Line' = 0.8
+		lineageTag: 74009453-81b5-498f-884a-3e430d696521
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// Deficiencies whose Reference names a written document (TO, AFI/DAFI/DAFMAN, supplement, AFTTP, NFPA, CFETP, etc.).
+	/// Based on the Reference, not the evaluator's Compliance checkbox. Strengths are excluded via [Deficiencies].
+	/// Edit the list below to add other non-document placeholders.
+	measure 'Policy-Linked Findings' = ```
+			
+			        CALCULATE (
+			            [Deficiencies],
+			            KEEPFILTERS (
+			                NOT Observations[Reference]
+			                    IN { "Uncited", "N/A", "None", "TTPs", "Best Practice", "Safe For Maintenance", "Local accountable property" }
+			            )
+			        )
+			```
+		formatString: 0
+		lineageTag: 3e1d7b52-8c4a-4f0e-9a61-5b2f7c8d9e14
+
+	/// Deficiencies with no written-document reference: recommended improvement areas.
+	measure 'Improvement Areas' = [Deficiencies] - [Policy-Linked Findings]
+		formatString: 0
+		lineageTag: 7a2c4e91-d3b5-4f68-8e07-1c9b6a5d3f22
+
+	/// Share of deficiencies tied to a written document. Replaces Compliance % on the Executive Summary.
+	measure 'Policy-Linked %' = DIVIDE ( [Policy-Linked Findings], [Deficiencies] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: c58e0f3a-2b71-4d9c-a6e4-8f1d3b7a0c55
+
+	measure 'Improvement Area %' = DIVIDE ( [Improvement Areas], [Deficiencies] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 9d4b6f17-e0a2-4c83-b5f9-2a7e1c6d8b30
+
+	/// ---- "SO WHAT" MEASURES (Exec Visual Options page) ----
+	/// Root causes a wing can correct with its own people and authority.
+	measure Wing-Owned = ```
+			
+			        CALCULATE (
+			            [Deficiencies],
+			            KEEPFILTERS (
+			                Observations[Finding Type]
+			                    IN {
+			                        "Process Exists but Not Followed", "Oversight/Supervision Gap",
+			                        "Documentation/Record Integrity Failure", "Training/Qualification Gap",
+			                        "Tool/Equip Accountability Failure", "Roles/Responsibilities Unclear",
+			                        "Safety/Risk Controls Inadequate", "Access/Authorization Control Failure"
+			                    }
+			            )
+			        )
+			```
+		formatString: 0
+		lineageTag: 4b8e2d61-7a3c-4f19-b5e0-9c1d6a2f8e01
+
+	/// Root causes that need resources or support from outside the wing (MAJCOM, depot, contractor, CE).
+	measure 'Needs Outside Help' = ```
+			
+			        CALCULATE (
+			            [Deficiencies],
+			            KEEPFILTERS (
+			                Observations[Finding Type]
+			                    IN { "Resource/Capacity Shortfall", "External Dependency Constraint", "System/Software Limitation" }
+			            )
+			        )
+			```
+		formatString: 0
+		lineageTag: 5c9f3e72-8b4d-4a2a-c6f1-0d2e7b3a9f12
+
+	/// No defined process exists: a guidance gap (local OI or higher-level guidance).
+	measure 'Guidance Gap' = ```
+			
+			        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Finding Type] = "Process Not Defined" ) )
+			```
+		formatString: 0
+		lineageTag: 6da04f83-9c5e-4b3b-d702-1e3f8c4b0a23
+
+	measure 'Wing-Owned %' = DIVIDE ( [Wing-Owned], [Deficiencies] )
+		formatString: 0%;-0%;0%
+		lineageTag: 7eb15094-ad6f-4c4c-e813-2f409d5c1b34
+
+	measure 'Needs Outside Help %' = DIVIDE ( [Needs Outside Help], [Deficiencies] )
+		formatString: 0%;-0%;0%
+		lineageTag: 8fc261a5-be70-4d5d-f924-3051ae6d2c45
+
+	/// Deficiencies where the team logged a training or corrective action: any real entry in the
+	/// Training/Corrective Action block counts (blank, N/A, NA and None do not).
+	measure 'Training Opportunities Taken' = ```
+			
+			        CALCULATE (
+			            [Deficiencies],
+			            KEEPFILTERS (
+			                FILTER (
+			                    ALL ( Observations[Corrective Action] ),
+			                    LEN ( TRIM ( Observations[Corrective Action] ) ) > 0
+			                        && NOT Observations[Corrective Action] IN { "N/A", "NA", "None" }
+			                )
+			            )
+			        )
+			```
+		formatString: 0
+		lineageTag: 90d372b6-cf81-4e6e-0a35-41620bfe3d56
+
+	measure 'Training Opportunities Taken %' = DIVIDE ( [Training Opportunities Taken], [Deficiencies] )
+		formatString: 0%;-0%;0%
+		lineageTag: b2f594d8-e1a3-4080-2c57-6384d1b05f78
+
+	/// Something was logged in Training/Corrective Action and it reads as a recommendation or action for the unit to follow up on.
+	measure 'Recommended Follow-Up' = ```
+			
+			        CALCULATE (
+			            [Deficiencies],
+			            KEEPFILTERS (
+			                FILTER (
+			                    ALL ( Observations[Corrective Action] ),
+			                    LEN ( TRIM ( Observations[Corrective Action] ) ) > 0
+			                        && NOT Observations[Corrective Action] IN { "N/A", "NA", "None" }
+			                )
+			            )
+			        ) - [Training Opportunities Taken]
+			```
+		formatString: 0
+		lineageTag: a1e483c7-d092-4f7f-1b46-5273c0af4e67
+
+	measure 'Priority Items Trained On' = ```
+			
+			        CALCULATE ( [Training Opportunities Taken], KEEPFILTERS ( Observations[Is Priority] = TRUE () ) )
+			```
+		formatString: 0
+		lineageTag: 5daea94a-7b63-4cb8-a02f-3e4d5c6b7a88
+
+	/// How LATT responded to each deficiency. The three below are mutually exclusive and add up to [Deficiencies].
+	/// 1) Flagged for staff action (brought back to the MAJCOM staff). Takes precedence over training.
+	measure 'Brought Back for Staff Action' = ```
+			
+			        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Staff Action] = TRUE () ) )
+			```
+		formatString: 0
+		lineageTag: 6ebfa05b-8c74-4dc9-b13f-4f5e6d7c8b99
+
+	/// 2) The team trained on site (and it was not brought back for staff action).
+	measure 'Provided Training' = ```
+			
+			        CALCULATE ( [Training Opportunities Taken], KEEPFILTERS ( Observations[Staff Action] = FALSE () ) )
+			```
+		formatString: 0
+		lineageTag: 7fc0b16c-9d85-4eda-c240-505f7e8d9caa
+
+	/// 3) Everything else: the team left a written recommendation for the unit to act on.
+	measure 'Recommendation to Unit' = [Deficiencies] - [Brought Back for Staff Action] - [Provided Training]
+		formatString: 0
+		lineageTag: 80d1c27d-ae96-4feb-d351-61608f9eadbb
+
+	measure 'High Risk Deficiencies' = ```
+			
+			        CALCULATE ( [Deficiencies], KEEPFILTERS ( Observations[Risk Level] = "High" ) )
+			```
+		formatString: 0
+		lineageTag: c30a05e9-f2b4-4191-3d68-7495e2c16089
+
+	measure 'High Risk %' = DIVIDE ( [High Risk Deficiencies], [Deficiencies] )
+		formatString: 0%;-0%;0%
+		lineageTag: d41b16fa-03c5-42a2-4e79-85a6f3d2719a
+
+	/// Text such as "9 of 12": root-cause categories that appeared at every assessment in the current selection.
+	measure 'Root Causes at Every LATT' = ```
+			
+			        VAR n =
+			            CALCULATE ( DISTINCTCOUNT ( Observations[Assessment] ), KEEPFILTERS ( Observations[Is Positive] = FALSE () ) )
+			        VAR types =
+			            CALCULATETABLE (
+			                VALUES ( Observations[Finding Type] ),
+			                KEEPFILTERS ( Observations[Is Positive] = FALSE () ),
+			                KEEPFILTERS ( Observations[Finding Type] <> "Not Classified" )
+			            )
+			        VAR everywhere =
+			            FILTER (
+			                types,
+			                CALCULATE ( DISTINCTCOUNT ( Observations[Assessment] ), KEEPFILTERS ( Observations[Is Positive] = FALSE () ) ) = n
+			            )
+			        RETURN
+			            IF ( n > 1, COUNTROWS ( everywhere ) & " of " & COUNTROWS ( types ) )
+			```
+		lineageTag: e52c270b-14d6-43b3-5f8a-96b7f4e3820b
+
+	/// Cell count for the recurrence heat map (0 instead of blank so gaps show).
+	measure 'Recurrence Count' = COALESCE ( [Deficiencies], 0 )
+		formatString: 0
+		lineageTag: f63d381c-25e7-44c4-609b-a7c805f4931c
+
+	measure 'Recurrence Color' = ```
+			
+			        VAR c = [Recurrence Count]
+			        RETURN
+			            SWITCH ( TRUE (), c = 0, "#FFFFFF", c <= 2, "#DBEAFE", c <= 5, "#BFDBFE", c <= 9, "#93C5FD", "#60A5FA" )
+			```
+		lineageTag: 074e492d-36f8-45d5-71ca-b8d916a5042d
+
+	/// Running total of training opportunities across assessments in date order (ASMT-001, ASMT-002, ...).
+	measure 'Training Running Total' = ```
+			
+			        VAR cur = MAX ( Observations[Assessment] )
+			        RETURN
+			            CALCULATE (
+			                [Training Opportunities Taken],
+			                FILTER ( ALLSELECTED ( Observations[Assessment] ), Observations[Assessment] <= cur )
+			            )
+			```
+		formatString: 0
+		lineageTag: 91e2d38e-bfa7-4f0c-e462-72719faecc01
+
+	measure 'Best Practices' = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Observation Type] = "Best Practice" ) )
+			```
+		formatString: 0
+		lineageTag: 1b4d8a2c-9e5f-41d0-a7b3-2c8e1f0a9d01
+
+	measure 'Superior Performers' = ```
+			
+			        CALCULATE ( [Total Observations], KEEPFILTERS ( Observations[Observation Type] = "Superior Performer" ) )
+			```
+		formatString: 0
+		lineageTag: 2c5e9b3d-0f6a-42e1-b8c4-3d9f2a1b0e02
+
+	measure 'Strength Rate %' = DIVIDE ( [Strengths], [Total Observations] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 3d6f0c4e-1a7b-43f2-c9d5-4e0a3b2c1f03
+
+	measure 'Guidance Gap %' = DIVIDE ( [Guidance Gap], [Deficiencies] )
+		formatString: 0%;-0%;0%
+		lineageTag: 4e7a1d5f-2b8c-44a3-d0e6-5f1b4c3d2a04
+
+	measure 'Assessments Affected' = ```
+			
+			        CALCULATE ( DISTINCTCOUNT ( Observations[Assessment] ), KEEPFILTERS ( Observations[Is Positive] = FALSE () ) )
+			```
+		formatString: 0
+		lineageTag: 5f8b2e6a-3c9d-45b4-e1f7-6a2c5d4e3b05
+
+	measure 'Risk Intensity Color' = ```
+			
+			        VAR p = [Priority %]
+			        RETURN
+			            SWITCH (
+			                TRUE (),
+			                ISBLANK ( p ), BLANK (),
+			                p >= 0.45, "#FECACA",
+			                p >= 0.25, "#FEF08A",
+			                "#DCFCE7"
+			            )
+			```
+		lineageTag: 6a9c3f7b-4d0e-46c5-f2a8-7b3d6e5f4c06
+
+	measure 'Staff Action %' = DIVIDE ( [Brought Back for Staff Action], [Deficiencies] )
+		formatString: 0.0%;-0.0%;0.0%
+		lineageTag: 7b0d4a8c-5e1f-47d6-a3b9-8c4e7f6a5d07
+
+	column ItemID
+		dataType: int64
+		formatString: 0
+		lineageTag: 28259171-f5f5-4d82-91be-d8f134516fe4
+		summarizeBy: none
+		sourceColumn: ItemID
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Neutral ID'
+		dataType: string
+		lineageTag: 76669255-94c1-4ee9-9167-fb231c1a157b
+		summarizeBy: none
+		sourceColumn: Neutral ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Assessment
+		dataType: string
+		lineageTag: 73f3578f-97fc-4655-a99f-5639eb9749fa
+		summarizeBy: none
+		sourceColumn: Assessment
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date Found'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b7e8ca2f-7abd-4463-acdc-cd7dce728682
+		summarizeBy: none
+		sourceColumn: Date Found
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Category
+		dataType: string
+		lineageTag: 45f19354-0156-4878-b4ff-94df8937badc
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Observation Type'
+		dataType: string
+		lineageTag: dcf0ea3a-e618-4a56-b0cc-ee89dabd7845
+		summarizeBy: none
+		sourceColumn: Observation Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Function
+		dataType: string
+		lineageTag: 7687756c-3a35-4d3d-9d7e-37c7a69fba77
+		summarizeBy: none
+		sourceColumn: Function
+
+		annotation SummarizationSetBy = Automatic
+
+	column Section
+		dataType: string
+		lineageTag: 451c92cf-2099-43d1-83a5-765ddcf1560c
+		summarizeBy: none
+		sourceColumn: Section
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Finding Type'
+		dataType: string
+		lineageTag: cb4f16e1-e185-46b1-9f1d-3c46169148d0
+		summarizeBy: none
+		sourceColumn: Finding Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reference
+		dataType: string
+		lineageTag: 4a7da559-a612-4bbe-9f64-b5ee2415c410
+		summarizeBy: none
+		sourceColumn: Reference
+
+		annotation SummarizationSetBy = Automatic
+
+	column Details
+		dataType: string
+		lineageTag: 7d271676-e814-435b-a9f7-0cefe7f83368
+		summarizeBy: none
+		sourceColumn: Details
+
+		annotation SummarizationSetBy = Automatic
+
+	column Recommendation
+		dataType: string
+		lineageTag: e725d7d8-d496-4b5a-aa26-d1e18d2fe284
+		summarizeBy: none
+		sourceColumn: Recommendation
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Corrective Action'
+		dataType: string
+		lineageTag: 0f7365d5-e6ac-4cbd-9ce6-857c6d7a6d26
+		summarizeBy: none
+		sourceColumn: Corrective Action
+
+		annotation SummarizationSetBy = Automatic
+
+	column Safety
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: af7bf0bb-bfb1-410a-a764-bf26cc577f29
+		summarizeBy: none
+		sourceColumn: Safety
+
+		annotation SummarizationSetBy = Automatic
+
+	column Compliance
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 81098ca5-a4b3-4b80-981d-fc3b73311978
+		summarizeBy: none
+		sourceColumn: Compliance
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Staff Action'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: d2f13392-792e-45fc-aa08-ee0a7bc31c2e
+		summarizeBy: none
+		sourceColumn: Staff Action
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reviewed
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 939705fc-3ec4-472d-9607-4da94631a655
+		summarizeBy: none
+		sourceColumn: Reviewed
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Operational Impact'
+		dataType: string
+		lineageTag: 0a6a04a9-99f5-4718-9507-24841b401796
+		summarizeBy: none
+		sourceColumn: Operational Impact
+		sortByColumn: 'Impact Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Probability
+		dataType: string
+		lineageTag: 5bf8f539-4c33-4639-a87e-041d9ada7db0
+		summarizeBy: none
+		sourceColumn: Probability
+		sortByColumn: 'Probability Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column Severity
+		dataType: string
+		lineageTag: 6acd56d7-c26c-4d9e-b02f-7968ee6d40cb
+		summarizeBy: none
+		sourceColumn: Severity
+		sortByColumn: 'Severity Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Risk Level'
+		dataType: string
+		lineageTag: c8d3693f-f95d-43a7-b606-4508bfe28269
+		summarizeBy: none
+		sourceColumn: Risk Level
+		sortByColumn: 'Risk Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Positive'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: cf19dd25-d055-4b36-896b-843ac7d695ee
+		summarizeBy: none
+		sourceColumn: Is Positive
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is Priority'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: 4e3510c8-6929-41a2-b223-ffcbce2cc521
+		summarizeBy: none
+		sourceColumn: Is Priority
+
+		annotation SummarizationSetBy = Automatic
+
+	column Sustainability
+		dataType: string
+		lineageTag: c99253f1-273d-4c92-9415-d59db1bb574e
+		summarizeBy: none
+		sourceColumn: Sustainability
+
+		annotation SummarizationSetBy = Automatic
+
+	column Value
+		dataType: string
+		lineageTag: 20c8640e-601a-4255-95be-057368a3af53
+		summarizeBy: none
+		sourceColumn: Value
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'DQ Issues'
+		dataType: string
+		lineageTag: 09b59aef-64a8-4761-ba19-8f9518c1e051
+		summarizeBy: none
+		sourceColumn: DQ Issues
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'DQ Issue Count'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: e05d4ee3-6754-446b-bdba-2b2a1e543b98
+		summarizeBy: sum
+		sourceColumn: DQ Issue Count
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Risk Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 84df48f7-d3f9-4496-9f13-186aadc540ec
+		summarizeBy: sum
+		sourceColumn: Risk Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Probability Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: aa18ed8c-1eed-454d-b0cb-b2f2ea4164b2
+		summarizeBy: sum
+		sourceColumn: Probability Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Severity Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: c4ff1433-54b1-4cc5-b89e-31f001264cf5
+		summarizeBy: sum
+		sourceColumn: Severity Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Impact Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 3a8ee70d-fc7e-461d-8f3a-8668e6f6d502
+		summarizeBy: sum
+		sourceColumn: Impact Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Severity Header'
+		dataType: string
+		lineageTag: 174854c6-7da4-46f7-b063-afd65dc64e2f
+		summarizeBy: none
+		sourceColumn: Severity Header
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Observations = m
+		mode: import
+		source =
+				let
+				    // ---------------------------------------------------------------------------
+				    // SOURCE. Before publishing to the Power BI service, replace this whole RawSource
+				    // step with only the SharePoint branch (the service may demand a gateway for the
+				    // unused File.Contents branch otherwise).
+				    // ---------------------------------------------------------------------------
+				    RawSource =
+				        let
+				            Site = SharePoint.Tables(SiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+				            Items = Table.SelectRows(Site, each [Title] = ObservationsListName){0}[Items]
+				        in
+				            Items,
+				
+				    // ---- NON-ATTRIBUTION FIREWALL: allow-list only. If a name differs in SharePoint, fix it here. ----
+				    Keep = Table.SelectColumns(RawSource, {
+				        "ID", "Base", "Observation Type", "Date Found", "Function", "Section", "Reference",
+				        "Details", "Recommendation", "Training/Corrective Action", "Safety", "Compliance",
+				        "Operational Impact", "Staff Action", "Finding Type", "Probability", "Severity",
+				        "Sustainability", "Value", "Reviewed"}),
+				
+				    Renamed = Table.RenameColumns(Keep, {
+				        {"ID", "ItemID"}, {"Training/Corrective Action", "Corrective Action"}}),
+				
+				    FreeText = {"Details", "Recommendation", "Corrective Action", "Reference"},
+				    ChoiceText = {"Base", "Observation Type", "Function", "Section", "Operational Impact", "Finding Type",
+				                  "Probability", "Severity", "Sustainability", "Value"},
+				    Bools = {"Safety", "Compliance", "Staff Action", "Reviewed"},
+				
+				    Typed = Table.TransformColumns(Renamed,
+				        {{"ItemID", each Int64.From(_), Int64.Type},
+				         {"Date Found", fnToDate, type nullable date}}
+				        & List.Transform(FreeText, (c) => {c, each fnSanitize(fnCleanText(_)), type text})
+				        & List.Transform(ChoiceText, (c) => {c, each fnCleanText(_), type text})
+				        & List.Transform(Bools, (c) => {c, fnToBool, type logical})),
+				
+				    // Known spelling fixes in choice values (extend as needed)
+				    SectionFixes = Table.ReplaceValue(Typed, "Avionic (Flightline)", "Avionics (Flightline)", Replacer.ReplaceValue, {"Section"}),
+				
+				    // ---- Neutral assessment key: one assessment = one LATT visit to one base ----
+				    // ObservationID can't be used: newer entries get a separate ID per observation, which
+				    // counted 258 "assessments" instead of ~6. A visit is the run of dates at one base;
+				    // a gap of more than VisitGapDays starts a new visit. Base is used only inside these
+				    // steps and is removed below, so it never reaches the data model.
+				    VisitGapDays = 30,
+				    BaseFilled = Table.Buffer(Table.TransformColumns(SectionFixes,
+				        {{"Base", each if _ = null or _ = "" then "UNKNOWN" else _, type text}})),
+				    BaseList = List.Distinct(BaseFilled[Base]),
+				    StartsByBase = Record.FromList(
+				        List.Transform(BaseList, (b) =>
+				            let ds = List.Sort(List.Distinct(List.RemoveNulls(Table.SelectRows(BaseFilled, each [Base] = b)[Date Found])))
+				            in List.Select(ds, (d) => let i = List.PositionOf(ds, d) in i = 0 or Duration.Days(d - ds{i - 1}) > VisitGapDays)),
+				        BaseList),
+				    WithVisit = Table.AddColumn(BaseFilled, "VisitKey", (r) =>
+				        let s = if r[Date Found] = null then null
+				                else List.Max(List.Select(Record.Field(StartsByBase, r[Base]), (x) => x <= r[Date Found]))
+				        in (if s = null then "9999-12-31" else Date.ToText(s, "yyyy-MM-dd")) & "|" & r[Base], type text),
+				    VisitKeys = List.Sort(List.Distinct(WithVisit[VisitKey])),
+				    AssessByKey = Record.FromList(
+				        List.Transform(List.Positions(VisitKeys), (i) => "ASMT-" & Text.PadStart(Text.From(i + 1), 3, "0")),
+				        VisitKeys),
+				    WithAssess = Table.AddColumn(WithVisit, "Assessment", each Record.Field(AssessByKey, [VisitKey]), type text),
+				    NoRawId = Table.RemoveColumns(WithAssess, {"Base", "VisitKey"}),
+				
+				    // ---- Derived classification ----
+				    AddNeutral = Table.AddColumn(NoRawId, "Neutral ID", each "LATT-" & Text.PadStart(Text.From([ItemID]), 4, "0"), type text),
+				    AddPositive = Table.AddColumn(AddNeutral, "Is Positive", each
+				        List.Contains({"Best Practice", "Superior Performer"}, [Observation Type]) or [Finding Type] = "Strength", type logical),
+				    AddCategory = Table.AddColumn(AddPositive, "Category", each
+				        if [Is Positive] then "Strength / Benchmark"
+				        else if [Observation Type] = "Recommended Improvement Area" then "Improvement Area"
+				        else "Finding", type text),
+				
+				    // Raw values kept for data-quality checks before blanks are relabeled
+				    AddDQ = Table.AddColumn(AddCategory, "DQ Issues", each
+				        let
+				            r = _,
+				            checks = {
+				                {"Missing Function", r[Function] = ""},
+				                {"Missing Date", r[Date Found] = null},
+				                {"Missing Finding Type", r[Finding Type] = "" and not r[Is Positive]},
+				                {"Missing Operational Impact", r[Operational Impact] = "" and not r[Is Positive]},
+				                {"Missing Probability", r[Probability] = "" and not r[Is Positive]},
+				                {"Missing Severity", r[Severity] = "" and not r[Is Positive]},
+				                {"Missing Reference", r[Reference] = "" and not r[Is Positive]}
+				            }
+				        in
+				            Text.Combine(List.Transform(List.Select(checks, each _{1}), each _{0}), "; "), type text),
+				    AddDQCount = Table.AddColumn(AddDQ, "DQ Issue Count", each if [DQ Issues] = "" then 0 else List.Count(Text.Split([DQ Issues], "; ")), Int64.Type),
+				
+				    Relabeled = Table.TransformRows(AddDQCount, (r) => Record.TransformFields(r, {
+				        {"Function", each if _ = "" then "Not Assigned" else _},
+				        {"Section", each if _ = "" then "Not Assigned" else _},
+				        {"Observation Type", each if _ = "" then "Unspecified" else _},
+				        {"Finding Type", each if _ = "" then (if r[Is Positive] then "Strength" else "Not Classified") else _},
+				        {"Operational Impact", each if _ = "" then "Not Assessed" else _},
+				        {"Probability", each if _ = "" then (if r[Is Positive] then "N/A" else "Not Assessed") else _},
+				        {"Severity", each if _ = "" then (if r[Is Positive] then "N/A" else "Not Assessed") else _},
+				        {"Sustainability", each if _ = "" then "N/A" else _},
+				        {"Value", each if _ = "" then "N/A" else _},
+				        {"Reference", each if _ = "" then "Uncited" else _}
+				    })),
+				    BackToTable = Table.FromRecords(Relabeled, Value.Type(AddDQCount)),
+				
+				    AddPriority = Table.AddColumn(BackToTable, "Is Priority", each
+				        not [Is Positive] and ([Safety] or [Severity] = "Severe" or [Operational Impact] = "High"), type logical),
+				
+				    AddRisk = Table.AddColumn(AddPriority, "Risk Level", each
+				        let p = [Probability], s = [Severity] in
+				        if not List.Contains({"Frequent", "Likely", "Occasional", "Unlikely"}, p)
+				           or not List.Contains({"Severe", "Significant", "Limited", "Minimal"}, s) then "Not Assessed"
+				        // Matches the LATT Operational Impact Matrix (Enterprise Operational Impact Matrix)
+				        else if (s = "Severe" and List.Contains({"Frequent", "Likely", "Occasional"}, p)) or (s = "Significant" and p = "Frequent") then "High"
+				        else if s = "Severe" or (s = "Significant" and List.Contains({"Likely", "Occasional"}, p))
+				             or (s = "Limited" and List.Contains({"Frequent", "Likely"}, p)) then "Moderate"
+				        else "Low", type text),
+				
+				    // Sort-order helper columns (use Column tools > Sort by column in the model)
+				    AddSorts = Table.AddColumn(
+				        Table.AddColumn(
+				            Table.AddColumn(
+				                Table.AddColumn(AddRisk, "Risk Sort", each
+				                    List.PositionOf({"High", "Moderate", "Low", "Not Assessed"}, [Risk Level]) + 1, Int64.Type),
+				                "Probability Sort", each
+				                    let x = List.PositionOf({"Frequent", "Likely", "Occasional", "Unlikely"}, [Probability]) in if x < 0 then 9 else x + 1, Int64.Type),
+				            "Severity Sort", each
+				                let x = List.PositionOf({"Severe", "Significant", "Limited", "Minimal"}, [Severity]) in if x < 0 then 9 else x + 1, Int64.Type),
+				        "Impact Sort", each
+				            let x = List.PositionOf({"High", "Moderate", "Low"}, [Operational Impact]) in if x < 0 then 9 else x + 1, Int64.Type),
+				
+				    Final = Table.ReorderColumns(AddSorts, {
+				        "ItemID", "Neutral ID", "Assessment", "Date Found", "Category", "Observation Type", "Function", "Section",
+				        "Finding Type", "Reference", "Details", "Recommendation", "Corrective Action",
+				        "Safety", "Compliance", "Staff Action", "Reviewed", "Operational Impact", "Probability", "Severity",
+				        "Risk Level", "Is Positive", "Is Priority", "Sustainability", "Value", "DQ Issues", "DQ Issue Count",
+				        "Risk Sort", "Probability Sort", "Severity Sort", "Impact Sort"}),
+				    Buffered = Table.Buffer(Final),
+				    #"Added Custom" = Table.AddColumn(Buffered, "Severity Header", each "Severity"),
+				    #"Filtered Rows" = Table.SelectRows(#"Added Custom", each true)
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

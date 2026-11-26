@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LATT Enterprise Non-Attribution Trend & HQ Action Tool</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --primary: #0f2942;
+      --secondary: #1d4ed8;
+      --accent: #0284c7;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --crit: #dc2626;
+      --crit-bg: #fef2f2;
+      --high: #ea580c;
+      --high-bg: #fff7ed;
+      --med: #ca8a04;
+      --med-bg: #fefce8;
+      --low: #16a34a;
+      --low-bg: #f0fdf4;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 48px;
+    }
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 4px solid var(--accent);
+    }
+    header h1 { font-size: 1.35rem; letter-spacing: 0.3px; }
+    header p { font-size: 0.84rem; color: #cbd5e1; margin-top: 2px; }
+    .anon-pill {
+      display: inline-block;
+      background: #059669;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    .container { max-width: 1440px; margin: 24px auto; padding: 0 24px; }
+
+    /* Control Panel */
+    .control-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .upload-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .file-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    input[type="file"] {
+      padding: 8px 12px;
+      border: 2px dashed var(--accent);
+      border-radius: 6px;
+      background: #f8fafc;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .btn {
+      background: var(--secondary);
+      color: #fff;
+      border: none;
+      padding: 9px 15px;
+      border-radius: 6px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #1e40af; }
+    .btn-green { background: #059669; }
+    .btn-green:hover { background: #047857; }
+    .btn-outline {
+      background: #fff;
+      color: var(--primary);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { background: #f1f5f9; }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .filter-group label {
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .filter-group select, .filter-group input {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      background: #fff;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .kpi-card.crit { border-left-color: var(--crit); }
+    .kpi-card.warn { border-left-color: var(--high); }
+    .kpi-card.good { border-left-color: var(--low); }
+    .kpi-title { font-size: 0.74rem; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+    .kpi-val { font-size: 1.85rem; font-weight: 800; color: var(--primary); margin: 4px 0; }
+    .kpi-sub { font-size: 0.8rem; color: var(--muted); }
+
+    /* Executive BLUF Box */
+    .bluf-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-left: 5px solid var(--accent);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+    .bluf-box h3 {
+      font-size: 0.95rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .bluf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .bluf-item {
+      background: #fff;
+      border: 1px solid #e0f2fe;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 0.84rem;
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .section-header h2 { font-size: 1.15rem; color: var(--primary); }
+    .section-header span { font-size: 0.82rem; color: var(--muted); }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 980px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; max-height: 480px; overflow-y: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    th, td { padding: 9px 11px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: var(--primary);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .num { text-align: center; font-weight: 600; }
+
+    /* Risk Matrix */
+    .risk-matrix th, .risk-matrix td { text-align: center; padding: 12px 8px; }
+    .risk-cell-crit { background: #fecaca; color: #7f1d1d; font-weight: 800; }
+    .risk-cell-high { background: #fed7aa; color: #7c2d12; font-weight: 700; }
+    .risk-cell-med  { background: #fef08a; color: #713f12; font-weight: 600; }
+    .risk-cell-low  { background: #bbf7d0; color: #14532d; }
+
+    /* Bars */
+    .bar-row { margin-bottom: 10px; }
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      margin-bottom: 3px;
+      font-weight: 600;
+    }
+    .bar-track {
+      width: 100%;
+      height: 18px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+    .bar-fill.pareto-core { background: #1d4ed8; }
+    .bar-fill.pareto-tail { background: #94a3b8; }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.71rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .b-crit { background: var(--crit-bg); color: var(--crit); border: 1px solid #fca5a5; }
+    .b-high { background: var(--high-bg); color: var(--high); border: 1px solid #fdba74; }
+    .b-med  { background: var(--med-bg); color: var(--med); border: 1px solid #fde047; }
+    .b-good { background: var(--low-bg); color: var(--low); border: 1px solid #86efac; }
+    .b-info { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+
+    /* Interactive Action Inputs */
+    .action-input, .action-select, .action-textarea {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      background: #fff;
+    }
+    .action-textarea { min-height: 62px; resize: vertical; }
+
+    .cluster-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .cluster-chip {
+      padding: 6px 12px;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .cluster-chip.active, .cluster-chip:hover {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    #empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--card);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+    }
+    .hidden { display: none !important; }
+
+    @media print {
+      .control-panel, .no-print { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .container { max-width: 100%; margin: 0; padding: 10px; }
+      .section-card { break-inside: avoid; box-shadow: none; border: 1px solid #cbd5e1; }
+      .table-wrap { max-height: none; overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>
+      LATT Enterprise Analytical Report & HQ Action Tracker
+      <span class="anon-pill">Non-Attribution Mode Active</span>
+    </h1>
+    <p>All Base, Unit, Evaluator, and Individual Identifiers Scrubbed — Enterprise Systemic Focus</p>
+  </div>
+  <div class="no-print" style="display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn btn-green" onclick="exportStaffActionWorksheet()">Export Enterprise HQ Action Worksheet (CSV)</button>
+    <button class="btn btn-outline" onclick="exportSanitizedMasterCSV()">Export Sanitized Dataset (CSV)</button>
+    <button class="btn" onclick="window.print()">Print / Save PDF Report</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Preloaded Synthetic Dataset & Non-Attribution Filters -->
+  <div class="control-panel">
+    <div class="upload-row">
+      <div class="file-input-wrap">
+        <span style="font-weight:700; font-size:0.9rem; color:var(--primary);">Portfolio Demo Dataset Active:</span>
+        <span id="dataset-meta" style="font-size:0.86rem; color:var(--muted);">Loading synthetic multi-site assessment records...</span>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-green" onclick="loadSyntheticDemo()">Reset Demo Dataset</button>
+      </div>
+    </div>
+
+    <div id="filter-bar" class="filter-row">
+      <div class="filter-group">
+        <label>Functional Area (FAM)</label>
+        <select id="f-func" onchange="applyFilters()"><option value="ALL">All Functional Areas</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Section / Workcenter</label>
+        <select id="f-sec" onchange="applyFilters()"><option value="ALL">All Sections</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Observation Type</label>
+        <select id="f-type" onchange="applyFilters()"><option value="ALL">All Observation Types</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Root Cause (Finding Type)</label>
+        <select id="f-find" onchange="applyFilters()"><option value="ALL">All Finding Types</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Enterprise HQ / Staff Action</label>
+        <select id="f-staff" onchange="applyFilters()">
+          <option value="ALL">All Observations</option>
+          <option value="True">Staff Action Flagged (True)</option>
+          <option value="False">Unit-Level Action (False)</option>
+        </select>
+      </div>
+      <div class="filter-group" style="display:flex; align-items:flex-end;">
+        <button class="btn btn-outline" style="width:100%;" onclick="resetFilters()">Reset Filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Content -->
+  <div id="report-content">
+    <!-- KPI Row -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Enterprise Observations</div>
+        <div class="kpi-val" id="kpi-total">0</div>
+        <div class="kpi-sub" id="kpi-findings-sub">0 Formal Findings</div>
+      </div>
+      <div class="kpi-card crit">
+        <div class="kpi-title">Critical / High Risk</div>
+        <div class="kpi-val" id="kpi-crit">0</div>
+        <div class="kpi-sub">Safety=True, Severe, or High Impact</div>
+      </div>
+      <div class="kpi-card warn">
+        <div class="kpi-title">Compliance Findings</div>
+        <div class="kpi-val" id="kpi-comp">0</div>
+        <div class="kpi-sub" id="kpi-comp-pct">0% of observations</div>
+      </div>
+      <div class="kpi-card warn">
+        <div class="kpi-title">Enterprise HQ Staff Actions</div>
+        <div class="kpi-val" id="kpi-staff">0</div>
+        <div class="kpi-sub" id="kpi-unrev">0 Pending Review</div>
+      </div>
+      <div class="kpi-card good">
+        <div class="kpi-title">Enterprise Benchmarks</div>
+        <div class="kpi-val" id="kpi-pos">0</div>
+        <div class="kpi-sub">Best Practices & Strengths</div>
+      </div>
+    </div>
+
+    <!-- 1. Executive Summary of Trending Items -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>1. Executive Summary of Trending Items (Enterprise Non-Attribution Synthesis)</h2>
+        <span>Automated synthesis of cross-cutting operational themes, root causes, and AFI/DAFI friction points</span>
+      </div>
+
+      <div class="bluf-box">
+        <h3>Enterprise Trend BLUF (Bottom Line Up Front)</h3>
+        <div id="bluf-narrative" class="bluf-grid"></div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">Trending Operational Themes & Systemic Clusters</h3>
+          <div class="table-wrap" id="trending-themes-table"></div>
+        </div>
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">Top Cited Directives & Regulatory References</h3>
+          <div class="table-wrap" id="trending-refs-table"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Functional & Section Concentration Heatmap -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>2. Functional Area & Workcenter Concentration Matrix</h2>
+        <span>Distribution of observations across Functional Areas and Sections (Installation/Unit Agnostic)</span>
+      </div>
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">Function × Observation Risk Profile Matrix</h3>
+          <div class="table-wrap" id="heatmap-func-risk"></div>
+        </div>
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">Top 10 Impacted Workcenter Sections</h3>
+          <div id="chart-sections"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Root Cause & Finding Type Categorization (Pareto 80/20) -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>3. Systemic Root Cause Analysis (80/20 Pareto Distribution)</h2>
+        <span>Isolating behavioral compliance gaps vs. enterprise resource or training shortfalls</span>
+      </div>
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">Finding Type Pareto Curve (Blue = Top 80% Cumulative Drivers)</h3>
+          <div id="pareto-chart"></div>
+        </div>
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">Root Cause Diagnostic Breakdown</h3>
+          <div class="table-wrap" id="pareto-table"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Risk Prioritization Matrix -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>4. Enterprise Risk Prioritization Matrix (Probability × Severity)</h2>
+        <span>Aggregated risk posture across all assessed logistics functions</span>
+      </div>
+      <div class="grid-2">
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">4×4 Probability vs. Severity Matrix</h3>
+          <div id="risk-matrix-container"></div>
+        </div>
+        <div>
+          <h3 style="font-size:0.92rem; margin-bottom:10px; color:var(--primary);">Operational Impact & Safety Summary</h3>
+          <div id="impact-summary-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Enterprise HQ Staff Action & Functional Area Response Tracker -->
+    <div class="section-card" style="border: 2px solid var(--secondary);">
+      <div class="section-header">
+        <div>
+          <h2>5. Enterprise HQ Staff Action & Functional Area Response Tracker</h2>
+          <span>Actionable tasking worksheet for Functional Area Managers (FAMs) to input COAs, ECDs, and coordination responses</span>
+        </div>
+        <div class="no-print" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <select id="action-scope" onchange="renderStaffActionTracker()" style="padding:7px 10px; border:1px solid var(--border); border-radius:6px; font-size:0.82rem; font-weight:600;">
+            <option value="STAFF_ONLY">Scope: Staff Action = True Only</option>
+            <option value="STAFF_AND_HIGH">Scope: Staff Action + High Impact / Safety</option>
+            <option value="ALL_FINDINGS">Scope: All Filtered Findings</option>
+          </select>
+          <button class="btn btn-green" onclick="exportStaffActionWorksheet()">Export Functional Response Worksheet (CSV)</button>
+        </div>
+      </div>
+      <div class="table-wrap" id="staff-action-table-wrap" style="max-height:560px;"></div>
+    </div>
+
+    <!-- 6. Non-Attribution Corrective Action Playbook & Positive Benchmarks -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>6. Enterprise Corrective Action Playbook & Benchmark Strengths</h2>
+        <span>Search sanitized observations or filter by operational theme</span>
+      </div>
+      <div class="cluster-grid" id="keyword-clusters"></div>
+      <div style="margin-bottom:12px; display:flex; gap:10px;" class="no-print">
+        <input type="text" id="playbook-search" placeholder="Search sanitized details, AFI/DAFI reference, section, or recommendation..." oninput="renderPlaybook()" style="flex:1; padding:8px 12px; border:1px solid var(--border); border-radius:6px;" />
+        <button class="btn btn-outline" onclick="clearPlaybookSearch()">Clear Search</button>
+      </div>
+      <div class="table-wrap" id="playbook-table-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let rawData = [];
+  let filteredData = [];
+  let activeKeyword = "";
+  // Store in-browser functional responses keyed by neutral RecordID
+  const staffResponses = {};
+
+  const THEMES = [
+    { label: "All Themes", pattern: "", name: "All Observations" },
+    { label: "Process & Compliance Adherence", pattern: "not followed|compliance|iaw|adhere|checklist|procedure", name: "Process / Checklist Non-Adherence" },
+    { label: "Training, SCR & OJT", pattern: "\\bscr\\b|special certification|training|\\bojt\\b|syllabus|qualif|afets", name: "Training, OJT & Special Certifications (SCR)" },
+    { label: "Documentation & Records", pattern: "document|record|form|log|signature|integrity|review", name: "Documentation & Record Integrity" },
+    { label: "Tool, CTK & Equipment Control", pattern: "\\bctk\\b|tool|accountability|equipment|calibration|age\\b", name: "Tool / CTK & Equipment Accountability" },
+    { label: "Supply, Materiel & CAD/PAD", pattern: "supply|materiel|cad/pad|muns|ammo|receipt|shipment|stock|24-602", name: "Supply Chain, Munitions & CAD/PAD Coordination" },
+    { label: "ALIS / IMDS / IT Systems", pattern: "\\balis\\b|\\bimds\\b|\\bgcss\\b|system|software|database|network", name: "IT Logistics Systems (ALIS / IMDS / GCSS-AF)" },
+    { label: "Safety, FOD & Risk Controls", pattern: "\\bfod\\b|foreign object|safety|\\bppe\\b|hazard|91-203|explosive", name: "Flightline FOD & Workplace Safety Controls" },
+    { label: "Manpower & Facility Capacity", pattern: "manpower|shortfall|staffing|facility|infrastructure|space|funding", name: "Manpower & Facility/Resource Constraints" }
+  ];
+
+  // Sanitizer: Scrubs Base names, numbered Wings/Squadrons/Groups, and personal identifiers from text
+  function sanitizeText(str) {
+    if (!str) return "";
+    let s = String(str)
+      .replace(/&quot;/g, '"')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&#39;/g, "'");
+
+    // Scrub installation names
+    s = s.replace(/\b(Alpha\s+Base|Bravo\s+Base|Charlie\s+Base|Delta\s+Base|Echo\s+Base|SITE-A|SITE-B|SITE-C|SITE-D|SITE-E)(\s+(AFB|Air\s+Force\s+Base|Base))?\b/gi, "[SITE]");
+
+    // Scrub numbered organizational units (e.g., 101st Operations Wing, 101st LRS, [XX FW])
+    s = s.replace(/\b\d{1,4}(st|nd|rd|th)?\s+(Fighter\s+Wing|Wing|Fighter\s+Generation\s+Squadron|Logistics\s+Readiness\s+Squadron|Maintenance\s+Group|Maintenance\s+Squadron|Munitions\s+Squadron|Aircraft\s+Maintenance\s+Squadron|Operations\s+Group|Squadron|Group|FW|WG|FGS|AMXS|MXG|MXS|LRS|MUNS|EMS|OSS|MSG|CES|SFS)\b/gi, "[UNIT]");
+
+    // Scrub standalone unit abbreviations preceded by numbers (e.g., "101 FW", "102 OPS")
+    s = s.replace(/\b\d{1,4}\s+(FW|WG|FGS|AMXS|MXG|MXS|LRS|MUNS|EMS|OSS)\b/gi, "[UNIT]");
+
+    // Scrub Title/Rank + Last Name references in narrative text (e.g., Supervisor [Name], Lead [Name])
+    s = s.replace(/\b(CMSgt|SMSgt|MSgt|TSgt|SSgt|SrA|A1C|Amn|Col|Lt\s*Col|Maj|Capt|1st\s*Lt|2d\s*Lt|GS-\d{1,2})\s+[A-Z][a-z]+(\s+[A-Z][a-z]+)?\b/g, "[PERSONNEL]");
+
+    return s.trim();
+  }
+
+  // RFC-4180 CSV Parser
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      const next = text[i + 1];
+      if (inQuotes) {
+        if (c === '"' && next === '"') { field += '"'; i++; }
+        else if (c === '"') { inQuotes = false; }
+        else { field += c; }
+      } else {
+        if (c === '"') { inQuotes = true; }
+        else if (c === ',') { row.push(field.trim()); field = ""; }
+        else if (c === '\r' && next === '\n') { row.push(field.trim()); rows.push(row); row = []; field = ""; i++; }
+        else if (c === '\n' || c === '\r') { row.push(field.trim()); rows.push(row); row = []; field = ""; }
+        else { field += c; }
+      }
+    }
+    if (field.length > 0 || row.length > 0) { row.push(field.trim()); rows.push(row); }
+    if (rows.length < 2) return [];
+
+    const headers = rows[0].map(h => h.trim());
+    const result = [];
+    for (let r = 1; r < rows.length; r++) {
+      if (rows[r].length === 1 && rows[r][0] === "") continue;
+      const rawObj = {};
+      headers.forEach((h, idx) => { rawObj[h] = rows[r][idx] !== undefined ? rows[r][idx] : ""; });
+
+      // Build sanitized, non-attributed record
+      const seqNum = rawObj['ID'] ? String(rawObj['ID']).padStart(4, '0') : String(r).padStart(4, '0');
+      const neutralID = `LATT-${seqNum}`;
+
+      const cleanRecord = {
+        NeutralID: neutralID,
+        DateFound: rawObj['Date Found'] || '',
+        ObservationType: sanitizeText(rawObj['Observation Type']) || 'Unspecified',
+        Function: sanitizeText(rawObj['Function']) || 'Unspecified',
+        Section: sanitizeText(rawObj['Section']) || 'Unspecified',
+        Reference: sanitizeText(rawObj['Reference']) || 'Uncited',
+        Details: sanitizeText(rawObj['Details']),
+        Recommendation: sanitizeText(rawObj['Recommendation']),
+        CorrectiveAction: sanitizeText(rawObj['Training/Corrective Action']),
+        Safety: String(rawObj['Safety'] || 'False'),
+        Compliance: String(rawObj['Compliance'] || 'False'),
+        OperationalImpact: sanitizeText(rawObj['Operational Impact']) || 'Unspecified',
+        StaffAction: String(rawObj['Staff Action'] || 'False'),
+        FindingType: sanitizeText(rawObj['Finding Type']) || 'Unspecified',
+        Probability: sanitizeText(rawObj['Probability']) || 'Unspecified',
+        Severity: sanitizeText(rawObj['Severity']) || 'Unspecified',
+        Sustainability: sanitizeText(rawObj['Sustainability']) || 'N/A',
+        Value: sanitizeText(rawObj['Value']) || 'N/A',
+        Reviewed: String(rawObj['Reviewed'] || 'False')
+      };
+
+      // Initialize default response tracker entry
+      if (!staffResponses[neutralID]) {
+        staffResponses[neutralID] = {
+          opr: cleanRecord.Function !== 'Unspecified' ? `HQ / ${cleanRecord.Function}` : 'Enterprise HQ FAM',
+          status: isBoolTrue(cleanRecord.Reviewed) ? 'Reviewed / In Coord' : 'Open - Pending FAM Input',
+          response: cleanRecord.CorrectiveAction || '',
+          policyChange: 'No',
+          ecd: ''
+        };
+      }
+      result.push(cleanRecord);
+    }
+    return result;
+  }
+
+  function esc(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function isBoolTrue(val) {
+    return String(val).toLowerCase() === 'true';
+  }
+
+  function processData(rows) {
+    rawData = rows;
+    document.getElementById('dataset-meta').innerHTML =
+      `Loaded &amp; Sanitized: <strong>${rawData.length} synthetic observations</strong> across 5 simulated assessments (All Site, Unit &amp; Personnel IDs scrubbed)`;
+    initFilters();
+    document.getElementById('filter-bar').classList.remove('hidden');
+    document.getElementById('report-content').classList.remove('hidden');
+    applyFilters();
+  }
+
+  window.addEventListener('DOMContentLoaded', loadSyntheticDemo);
+
+  function populateSelect(id, field, defaultLabel) {
+    const sel = document.getElementById(id);
+    const vals = Array.from(new Set(rawData.map(d => d[field] || "Unspecified"))).sort();
+    sel.innerHTML = `<option value="ALL">${defaultLabel}</option>` +
+      vals.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  }
+
+  function initFilters() {
+    populateSelect('f-func', 'Function', 'All Functional Areas');
+    populateSelect('f-sec', 'Section', 'All Sections');
+    populateSelect('f-type', 'ObservationType', 'All Observation Types');
+    populateSelect('f-find', 'FindingType', 'All Finding Types');
+  }
+
+  function resetFilters() {
+    ['f-func', 'f-sec', 'f-type', 'f-find', 'f-staff'].forEach(id => {
+      document.getElementById(id).value = 'ALL';
+    });
+    activeKeyword = "";
+    document.getElementById('playbook-search').value = "";
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const f = document.getElementById('f-func').value;
+    const s = document.getElementById('f-sec').value;
+    const t = document.getElementById('f-type').value;
+    const ft = document.getElementById('f-find').value;
+    const st = document.getElementById('f-staff').value;
+
+    filteredData = rawData.filter(d => {
+      return (f === 'ALL' || d.Function === f) &&
+             (s === 'ALL' || d.Section === s) &&
+             (t === 'ALL' || d.ObservationType === t) &&
+             (ft === 'ALL' || d.FindingType === ft) &&
+             (st === 'ALL' || d.StaffAction.toLowerCase() === st.toLowerCase());
+    });
+
+    renderKPIs();
+    renderTrendingSummary();
+    renderFunctionConcentration();
+    renderPareto();
+    renderRiskMatrix();
+    renderStaffActionTracker();
+    renderThemeChips();
+    renderPlaybook();
+  }
+
+  function renderKPIs() {
+    const total = filteredData.length;
+    const findings = filteredData.filter(d => d.ObservationType === 'Finding').length;
+    const crit = filteredData.filter(d =>
+      isBoolTrue(d.Safety) || d.Severity === 'Severe' || d.OperationalImpact === 'High'
+    ).length;
+    const comp = filteredData.filter(d => isBoolTrue(d.Compliance)).length;
+    const staff = filteredData.filter(d => isBoolTrue(d.StaffAction)).length;
+    const unrev = filteredData.filter(d => !isBoolTrue(d.Reviewed)).length;
+    const pos = filteredData.filter(d =>
+      d.ObservationType === 'Best Practice' ||
+      d.ObservationType === 'Superior Performer' ||
+      d.FindingType === 'Strength'
+    ).length;
+
+    document.getElementById('kpi-total').textContent = total;
+    document.getElementById('kpi-findings-sub').textContent = `${findings} Formal Findings`;
+    document.getElementById('kpi-crit').textContent = crit;
+    document.getElementById('kpi-comp').textContent = comp;
+    document.getElementById('kpi-comp-pct').textContent =
+      total ? `${((comp / total) * 100).toFixed(1)}% of observations` : '0%';
+    document.getElementById('kpi-staff').textContent = staff;
+    document.getElementById('kpi-unrev').textContent = `${unrev} Unreviewed`;
+    document.getElementById('kpi-pos').textContent = pos;
+  }
+
+  // Section 1: Summary of Trending Items
+  function renderTrendingSummary() {
+    const total = filteredData.length || 1;
+
+    // Top Function, Section, Root Cause
+    const topBy = (field, excludeVal) => {
+      const counts = {};
+      filteredData.forEach(d => {
+        const v = d[field] || 'Unspecified';
+        if (v === 'Unspecified' || v === excludeVal) return;
+        counts[v] = (counts[v] || 0) + 1;
+      });
+      return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    };
+
+    const topFuncs = topBy('Function');
+    const topSecs  = topBy('Section');
+    const topCauses = topBy('FindingType', 'Strength');
+
+    const f1 = topFuncs[0] ? `${topFuncs[0][0]} (${topFuncs[0][1]})` : 'N/A';
+    const f2 = topFuncs[1] ? `${topFuncs[1][0]} (${topFuncs[1][1]})` : 'N/A';
+    const s1 = topSecs[0]  ? `${topSecs[0][0]} (${topSecs[0][1]})` : 'N/A';
+    const s2 = topSecs[1]  ? `${topSecs[1][0]} (${topSecs[1][1]})` : 'N/A';
+    const c1 = topCauses[0] ? `${topCauses[0][0]} (${topCauses[0][1]})` : 'N/A';
+    const c2 = topCauses[1] ? `${topCauses[1][0]} (${topCauses[1][1]})` : 'N/A';
+
+    const staffCnt = filteredData.filter(d => isBoolTrue(d.StaffAction)).length;
+    const highRiskCnt = filteredData.filter(d => isBoolTrue(d.Safety) || d.Severity === 'Severe' || d.OperationalImpact === 'High').length;
+
+    document.getElementById('bluf-narrative').innerHTML = `
+      <div class="bluf-item">
+        <strong>1. Primary Functional Friction:</strong><br>
+        Enterprise observations are most heavily concentrated in <strong>${esc(f1)}</strong> and <strong>${esc(f2)}</strong>, led at the workcenter level by <strong>${esc(s1)}</strong> and <strong>${esc(s2)}</strong>.
+      </div>
+      <div class="bluf-item">
+        <strong>2. Dominant Systemic Root Cause:</strong><br>
+        The #1 driver across assessed units is <strong>${esc(c1)}</strong>, followed by <strong>${esc(c2)}</strong>—indicating discipline/supervisory enforcement outweighs missing guidance.
+      </div>
+      <div class="bluf-item">
+        <strong>3. Risk & Safety Posture:</strong><br>
+        <strong>${highRiskCnt} observations (${((highRiskCnt/total)*100).toFixed(1)}%)</strong> carry High Operational Impact, Severe Severity, or direct Safety flags requiring immediate supervisory intervention.
+      </div>
+      <div class="bluf-item">
+        <strong>4. Enterprise HQ Action Queue:</strong><br>
+        <strong>${staffCnt} items</strong> are flagged for higher-headquarters <strong>Staff Action</strong> to resolve cross-enterprise resource, policy, or IT system bottlenecks.
+      </div>
+    `;
+
+    // Trending Operational Themes Table
+    const themeStats = THEMES.filter(t => t.pattern !== "").map(th => {
+      const reg = new RegExp(th.pattern, 'i');
+      const matches = filteredData.filter(d =>
+        reg.test(`${d.Details} ${d.Recommendation} ${d.Reference} ${d.Section} ${d.FindingType}`)
+      );
+      const highCnt = matches.filter(d => isBoolTrue(d.Safety) || d.Severity === 'Severe' || d.OperationalImpact === 'High').length;
+      // Top section in this theme
+      const secMap = {};
+      matches.forEach(d => { if (d.Section !== 'Unspecified') secMap[d.Section] = (secMap[d.Section] || 0) + 1; });
+      const topS = Object.entries(secMap).sort((a,b) => b[1]-a[1])[0];
+      return {
+        name: th.name,
+        count: matches.length,
+        pct: ((matches.length / total) * 100).toFixed(1),
+        highCnt,
+        topSec: topS ? `${topS[0]} (${topS[1]})` : 'Multiple'
+      };
+    }).sort((a, b) => b.count - a.count);
+
+    let thHtml = `<table><thead><tr>
+      <th>Trending Enterprise Theme</th><th class="num">Volume</th><th class="num">% of Total</th>
+      <th class="num">High/Severe/Safety</th><th>Primary Workcenter Affected</th>
+    </tr></thead><tbody>`;
+    themeStats.forEach(t => {
+      thHtml += `<tr>
+        <td><strong>${esc(t.name)}</strong></td>
+        <td class="num">${t.count}</td>
+        <td class="num">${t.pct}%</td>
+        <td class="num"><span class="badge ${t.highCnt > 10 ? 'b-crit' : 'b-med'}">${t.highCnt}</span></td>
+        <td>${esc(t.topSec)}</td>
+      </tr>`;
+    });
+    thHtml += `</tbody></table>`;
+    document.getElementById('trending-themes-table').innerHTML = thHtml;
+
+    // Top Cited AFI / DAFI / TO Publications
+    const refCounts = {};
+    filteredData.forEach(d => {
+      const rawRef = d.Reference || '';
+      // Extract publication family (e.g., AFI 21-101, DAFI 24-602, TO 00-20-1, AFI 91-203)
+      const matches = rawRef.match(/\b(D?AFI|AFMAN|TO|DoDI|AFPD)\s*\d{1,2}-\d{1,4}([A-Z0-9\-]*)/gi);
+      if (matches && matches.length) {
+        matches.forEach(m => {
+          const norm = m.toUpperCase().replace(/\s+/g, ' ').trim();
+          refCounts[norm] = (refCounts[norm] || 0) + 1;
+        });
+      } else if (rawRef && rawRef !== 'Uncited') {
+        const shortRef = rawRef.split(',')[0].slice(0, 28).trim();
+        refCounts[shortRef] = (refCounts[shortRef] || 0) + 1;
+      }
+    });
+
+    const topRefs = Object.entries(refCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    let rHtml = `<table><thead><tr><th>Publication / Directive Family</th><th class="num">Citations</th><th>Primary Compliance Trend</th></tr></thead><tbody>`;
+    if (!topRefs.length) {
+      rHtml += `<tr><td colspan="3" class="num">No references cited in current filter.</td></tr>`;
+    } else {
+      topRefs.forEach(([ref, cnt]) => {
+        const subRows = filteredData.filter(d => (d.Reference || '').toUpperCase().includes(ref));
+        const causeMap = {};
+        subRows.forEach(d => { if (d.FindingType !== 'Unspecified') causeMap[d.FindingType] = (causeMap[d.FindingType] || 0) + 1; });
+        const topC = Object.entries(causeMap).sort((a,b) => b[1]-a[1])[0];
+        rHtml += `<tr>
+          <td><strong>${esc(ref)}</strong></td>
+          <td class="num">${cnt}</td>
+          <td>${esc(topC ? topC[0] : 'General Compliance')}</td>
+        </tr>`;
+      });
+    }
+    rHtml += `</tbody></table>`;
+    document.getElementById('trending-refs-table').innerHTML = rHtml;
+  }
+
+  // Section 2: Function x Risk Profile & Top Sections (No Base/Unit Callouts)
+  function renderFunctionConcentration() {
+    const funcs = Array.from(new Set(filteredData.map(d => d.Function))).sort();
+    let html = `<table><thead><tr>
+      <th>Functional Area</th><th class="num">Total Obs</th><th class="num">Compliance</th>
+      <th class="num">High Impact / Safety</th><th class="num">Staff Actions</th><th class="num">Strengths</th>
+    </tr></thead><tbody>`;
+
+    funcs.forEach(f => {
+      const rows = filteredData.filter(d => d.Function === f);
+      const comp = rows.filter(d => isBoolTrue(d.Compliance)).length;
+      const high = rows.filter(d => isBoolTrue(d.Safety) || d.Severity === 'Severe' || d.OperationalImpact === 'High').length;
+      const staff = rows.filter(d => isBoolTrue(d.StaffAction)).length;
+      const pos = rows.filter(d => d.ObservationType === 'Best Practice' || d.ObservationType === 'Superior Performer' || d.FindingType === 'Strength').length;
+
+      html += `<tr>
+        <td><strong>${esc(f)}</strong></td>
+        <td class="num">${rows.length}</td>
+        <td class="num">${comp}</td>
+        <td class="num"><span class="badge ${high > 15 ? 'b-crit' : 'b-med'}">${high}</span></td>
+        <td class="num"><span class="badge ${staff > 0 ? 'b-info' : ''}">${staff}</span></td>
+        <td class="num"><span class="badge b-good">${pos}</span></td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+    document.getElementById('heatmap-func-risk').innerHTML = html;
+
+    // Top 10 Sections
+    const secCounts = {};
+    filteredData.forEach(d => {
+      const s = d.Section || 'Unspecified';
+      secCounts[s] = (secCounts[s] || 0) + 1;
+    });
+    const topSecs = Object.entries(secCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const maxSec = topSecs.length ? topSecs[0][1] : 1;
+
+    document.getElementById('chart-sections').innerHTML = topSecs.map(([sec, cnt]) => {
+      const pct = ((cnt / maxSec) * 100).toFixed(1);
+      return `<div class="bar-row">
+        <div class="bar-label"><span>${esc(sec)}</span><span>${cnt}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join('');
+  }
+
+  // Section 3: Pareto Root Cause
+  function renderPareto() {
+    const fCounts = {};
+    let totalValid = 0;
+    filteredData.forEach(d => {
+      const ft = d.FindingType || 'Unspecified';
+      if (ft === 'Strength') return;
+      fCounts[ft] = (fCounts[ft] || 0) + 1;
+      totalValid++;
+    });
+
+    const sorted = Object.entries(fCounts).sort((a, b) => b[1] - a[1]);
+    const maxC = sorted.length ? sorted[0][1] : 1;
+    let cum = 0;
+
+    let chartHtml = "";
+    let tableHtml = `<table><thead><tr><th>Finding Type (Systemic Root Cause)</th><th class="num">Count</th><th class="num">% Share</th><th class="num">Cumulative %</th></tr></thead><tbody>`;
+
+    sorted.forEach(([ft, cnt]) => {
+      const share = totalValid ? (cnt / totalValid) * 100 : 0;
+      const prevCum = cum;
+      cum += share;
+      const isCore = prevCum < 80;
+      const barW = ((cnt / maxC) * 100).toFixed(1);
+
+      chartHtml += `<div class="bar-row">
+        <div class="bar-label">
+          <span>${esc(ft)}</span>
+          <span>${cnt} (${share.toFixed(1)}% | Cum: ${cum.toFixed(0)}%)</span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill ${isCore ? 'pareto-core' : 'pareto-tail'}" style="width:${barW}%"></div>
+        </div>
+      </div>`;
+
+      tableHtml += `<tr>
+        <td><strong>${esc(ft)}</strong></td>
+        <td class="num">${cnt}</td>
+        <td class="num">${share.toFixed(1)}%</td>
+        <td class="num"><span class="badge ${isCore ? 'b-high' : 'b-good'}">${cum.toFixed(1)}%</span></td>
+      </tr>`;
+    });
+
+    tableHtml += `</tbody></table>`;
+    document.getElementById('pareto-chart').innerHTML = chartHtml || "<p>No deficiency records</p>";
+    document.getElementById('pareto-table').innerHTML = tableHtml;
+  }
+
+  // Section 4: Risk Matrix
+  function renderRiskMatrix() {
+    const probs = ['Frequent', 'Likely', 'Occasional', 'Unlikely'];
+    const sevs  = ['Severe', 'Significant', 'Limited', 'Minimal'];
+
+    const counts = {};
+    probs.forEach(p => { counts[p] = {}; sevs.forEach(s => counts[p][s] = 0); });
+    filteredData.forEach(d => {
+      if (counts[d.Probability] && counts[d.Probability][d.Severity] !== undefined) {
+        counts[d.Probability][d.Severity]++;
+      }
+    });
+
+    function cellClass(p, s) {
+      if ((s === 'Severe' && (p === 'Frequent' || p === 'Likely' || p === 'Occasional')) ||
+          (s === 'Significant' && p === 'Frequent')) return 'risk-cell-crit';
+      if (s === 'Severe' || (s === 'Significant' && (p === 'Likely' || p === 'Occasional')) ||
+          (s === 'Limited' && p === 'Frequent')) return 'risk-cell-high';
+      if (s === 'Significant' || s === 'Limited') return 'risk-cell-med';
+      return 'risk-cell-low';
+    }
+
+    let mHtml = `<table class="risk-matrix"><thead><tr><th>Probability \\ Severity</th>` +
+      sevs.map(s => `<th>${s}</th>`).join('') + `</tr></thead><tbody>`;
+    probs.forEach(p => {
+      mHtml += `<tr><th>${p}</th>`;
+      sevs.forEach(s => { mHtml += `<td class="${cellClass(p, s)}">${counts[p][s]}</td>`; });
+      mHtml += `</tr>`;
+    });
+    mHtml += `</tbody></table>`;
+    document.getElementById('risk-matrix-container').innerHTML = mHtml;
+
+    const impCounts = { High: 0, Moderate: 0, Low: 0 };
+    let safetyCount = 0;
+    filteredData.forEach(d => {
+      if (impCounts[d.OperationalImpact] !== undefined) impCounts[d.OperationalImpact]++;
+      if (isBoolTrue(d.Safety)) safetyCount++;
+    });
+
+    document.getElementById('impact-summary-box').innerHTML = `
+      <table>
+        <thead><tr><th>Enterprise Risk Tier</th><th class="num">Observations</th><th>Action Level</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Safety Flagged (Safety = True)</strong></td><td class="num">${safetyCount}</td><td><span class="badge b-crit">Immediate Risk Control</span></td></tr>
+          <tr><td><strong>High Operational Impact</strong></td><td class="num">${impCounts.High}</td><td><span class="badge b-crit">HQ / Functional Priority</span></td></tr>
+          <tr><td><strong>Moderate Operational Impact</strong></td><td class="num">${impCounts.Moderate}</td><td><span class="badge b-med">Systemic Process Fix</span></td></tr>
+          <tr><td><strong>Low Operational Impact</strong></td><td class="num">${impCounts.Low}</td><td><span class="badge b-good">Routine Training</span></td></tr>
+        </tbody>
+      </table>
+    `;
+  }
+
+  // Section 5: Enterprise HQ Staff Action & Functional Area Response Tracker
+  function getStaffActionRows() {
+    const scope = document.getElementById('action-scope').value;
+    return filteredData.filter(d => {
+      if (scope === 'STAFF_ONLY') return isBoolTrue(d.StaffAction);
+      if (scope === 'STAFF_AND_HIGH') {
+        return isBoolTrue(d.StaffAction) || isBoolTrue(d.Safety) || d.Severity === 'Severe' || d.OperationalImpact === 'High';
+      }
+      return d.ObservationType === 'Finding' || d.ObservationType === 'Recommended Improvement Area';
+    });
+  }
+
+  function updateStaffResp(id, field, val) {
+    if (!staffResponses[id]) staffResponses[id] = {};
+    staffResponses[id][field] = val;
+  }
+
+  function renderStaffActionTracker() {
+    const rows = getStaffActionRows();
+    let html = `<table><thead><tr>
+      <th style="width:85px;">Task ID</th>
+      <th style="width:140px;">Functional Area & Section</th>
+      <th style="width:145px;">Root Cause & Risk</th>
+      <th style="width:28%;">Sanitized Observation & Reference</th>
+      <th style="width:22%;">LATT Recommendation</th>
+      <th style="width:24%;">Functional Area (FAM) Response / COA & ECD</th>
+    </tr></thead><tbody>`;
+
+    if (!rows.length) {
+      html += `<tr><td colspan="6" class="num">No action items match current scope and filters.</td></tr>`;
+    } else {
+      rows.slice(0, 120).forEach(d => {
+        const resp = staffResponses[d.NeutralID] || {};
+        const badges = [];
+        if (isBoolTrue(d.StaffAction)) badges.push(`<span class="badge b-info">STAFF ACTION</span>`);
+        if (isBoolTrue(d.Safety)) badges.push(`<span class="badge b-crit">SAFETY</span>`);
+        if (d.OperationalImpact === 'High' || d.Severity === 'Severe') badges.push(`<span class="badge b-high">${esc(d.Severity || d.OperationalImpact)}</span>`);
+
+        html += `<tr>
+          <td><strong>${esc(d.NeutralID)}</strong><br><small style="color:var(--muted)">${esc(d.DateFound)}</small></td>
+          <td><strong>${esc(d.Function)}</strong><br><small>${esc(d.Section)}</small></td>
+          <td>${esc(d.FindingType)}<br><div style="margin-top:4px; display:flex; gap:3px; flex-wrap:wrap;">${badges.join('')}</div></td>
+          <td>
+            <small style="color:var(--secondary); font-weight:700;">Ref: ${esc(d.Reference)}</small><br>
+            ${esc(d.Details)}
+          </td>
+          <td>${esc(d.Recommendation || 'Pending recommendation')}</td>
+          <td>
+            <div style="display:grid; gap:6px;">
+              <input class="action-input" type="text" placeholder="Assigned OPR / FAM" value="${esc(resp.opr || '')}" oninput="updateStaffResp('${d.NeutralID}', 'opr', this.value)" />
+              <div style="display:flex; gap:6px;">
+                <select class="action-select" onchange="updateStaffResp('${d.NeutralID}', 'status', this.value)">
+                  ${['Open - Pending FAM Input', 'In Coordination (HQ)', 'COA Approved', 'Policy Change In Work', 'Closed'].map(st =>
+                    `<option value="${st}" ${resp.status === st ? 'selected' : ''}>${st}</option>`
+                  ).join('')}
+                </select>
+                <input class="action-input" type="text" placeholder="ECD (YYYY-MM-DD)" value="${esc(resp.ecd || '')}" oninput="updateStaffResp('${d.NeutralID}', 'ecd', this.value)" style="max-width:125px;" />
+              </div>
+              <textarea class="action-textarea" placeholder="Enter Functional Area Response / Course of Action (COA) for Enterprise HQ..." oninput="updateStaffResp('${d.NeutralID}', 'response', this.value)">${esc(resp.response || '')}</textarea>
+            </div>
+          </td>
+        </tr>`;
+      });
+    }
+    html += `</tbody></table>`;
+    if (rows.length > 120) {
+      html += `<p style="font-size:0.8rem; color:var(--muted); margin-top:8px;">Showing first 120 of ${rows.length} items in browser. Click <strong>Export Functional Response Worksheet (CSV)</strong> to export all ${rows.length} items to Excel.</p>`;
+    }
+    document.getElementById('staff-action-table-wrap').innerHTML = html;
+  }
+
+  // Section 6: Playbook & Strengths
+  function renderThemeChips() {
+    const wrap = document.getElementById('keyword-clusters');
+    wrap.innerHTML = THEMES.map(th => {
+      const reg = th.pattern ? new RegExp(th.pattern, 'i') : null;
+      const count = reg
+        ? filteredData.filter(d => reg.test(`${d.Details} ${d.Recommendation} ${d.Reference} ${d.Section} ${d.FindingType}`)).length
+        : filteredData.length;
+      const isAct = activeKeyword === th.pattern ? 'active' : '';
+      return `<div class="cluster-chip ${isAct}" onclick="setTheme('${th.pattern.replace(/\\/g, '\\\\')}')">
+        ${esc(th.label)} (${count})
+      </div>`;
+    }).join('');
+  }
+
+  function setTheme(pattern) {
+    activeKeyword = pattern;
+    renderThemeChips();
+    renderPlaybook();
+  }
+
+  function clearPlaybookSearch() {
+    activeKeyword = "";
+    document.getElementById('playbook-search').value = "";
+    renderThemeChips();
+    renderPlaybook();
+  }
+
+  function renderPlaybook() {
+    const q = document.getElementById('playbook-search').value.trim().toLowerCase();
+    const reg = activeKeyword ? new RegExp(activeKeyword, 'i') : null;
+
+    const rows = filteredData.filter(d => {
+      const blob = `${d.NeutralID} ${d.Function} ${d.Section} ${d.Reference} ${d.Details} ${d.Recommendation} ${d.CorrectiveAction} ${d.FindingType}`;
+      return (!reg || reg.test(blob)) && (!q || blob.toLowerCase().includes(q));
+    });
+
+    let html = `<table><thead><tr>
+      <th style="width:95px;">ID / Type</th>
+      <th style="width:160px;">Function & Section</th>
+      <th style="width:150px;">Root Cause & Ref</th>
+      <th>Sanitized Observation Details</th>
+      <th>Recommendation & Corrective Action</th>
+    </tr></thead><tbody>`;
+
+    if (!rows.length) {
+      html += `<tr><td colspan="5" class="num">No matching records found.</td></tr>`;
+    } else {
+      rows.slice(0, 120).forEach(d => {
+        const isPos = d.ObservationType === 'Best Practice' || d.ObservationType === 'Superior Performer' || d.FindingType === 'Strength';
+        html += `<tr>
+          <td><strong>${esc(d.NeutralID)}</strong><br><span class="badge ${isPos ? 'b-good' : 'b-med'}">${esc(d.ObservationType)}</span></td>
+          <td><strong>${esc(d.Function)}</strong><br><small>${esc(d.Section)}</small></td>
+          <td><strong>${esc(d.FindingType)}</strong><br><small style="color:var(--secondary)">${esc(d.Reference)}</small></td>
+          <td>${esc(d.Details)}</td>
+          <td><strong>Rec:</strong> ${esc(d.Recommendation || 'N/A')}${d.CorrectiveAction ? `<br><br><strong>Action:</strong> ${esc(d.CorrectiveAction)}` : ''}</td>
+        </tr>`;
+      });
+    }
+    html += `</tbody></table>`;
+    document.getElementById('playbook-table-wrap').innerHTML = html;
+  }
+
+  // Export 1: Enterprise HQ Functional Area Action Item Worksheet (CSV)
+  function exportStaffActionWorksheet() {
+    if (!filteredData.length) {
+      alert("Please upload the LATT CSV file first.");
+      return;
+    }
+    const rows = getStaffActionRows();
+    const headers = [
+      "Task_ID",
+      "Date_Found",
+      "Functional_Area",
+      "Section_Workcenter",
+      "Staff_Action_Flag",
+      "Safety_Flag",
+      "Operational_Impact",
+      "Severity",
+      "Probability",
+      "Root_Cause_Finding_Type",
+      "Directive_Reference",
+      "Sanitized_Observation_Details",
+      "LATT_Recommendation",
+      "Assigned_FAM_OPR",
+      "Action_Status",
+      "Functional_Area_Response_COA",
+      "Target_ECD",
+      "Enterprise_HQ_Verification_Notes"
+    ];
+
+    const csvLines = [headers.join(',')];
+    rows.forEach(d => {
+      const resp = staffResponses[d.NeutralID] || {};
+      const line = [
+        d.NeutralID,
+        d.DateFound,
+        d.Function,
+        d.Section,
+        d.StaffAction,
+        d.Safety,
+        d.OperationalImpact,
+        d.Severity,
+        d.Probability,
+        d.FindingType,
+        d.Reference,
+        d.Details,
+        d.Recommendation,
+        resp.opr || `HQ / ${d.Function}`,
+        resp.status || "Open - Pending FAM Input",
+        resp.response || "",
+        resp.ecd || "",
+        ""
+      ].map(v => `"${String(v || '').replace(/"/g, '""')}"`);
+      csvLines.push(line.join(','));
+    });
+
+    downloadBlob(csvLines.join('\r\n'), 'Enterprise_HQ_Functional_Action_Worksheet.csv');
+  }
+
+  // Export 2: Full Sanitized Non-Attribution Dataset (CSV)
+  function exportSanitizedMasterCSV() {
+    if (!filteredData.length) {
+      alert("Please upload the LATT CSV file first.");
+      return;
+    }
+    const headers = [
+      "Neutral_ID", "Date_Found", "Observation_Type", "Function", "Section",
+      "Reference", "Finding_Type", "Safety", "Compliance", "Operational_Impact",
+      "Probability", "Severity", "Staff_Action", "Sustainability", "Value",
+      "Sanitized_Details", "Sanitized_Recommendation", "Sanitized_Corrective_Action"
+    ];
+    const csvLines = [headers.join(',')];
+    filteredData.forEach(d => {
+      const line = [
+        d.NeutralID, d.DateFound, d.ObservationType, d.Function, d.Section,
+        d.Reference, d.FindingType, d.Safety, d.Compliance, d.OperationalImpact,
+        d.Probability, d.Severity, d.StaffAction, d.Sustainability, d.Value,
+        d.Details, d.Recommendation, d.CorrectiveAction
+      ].map(v => `"${String(v || '').replace(/"/g, '""')}"`);
+      csvLines.push(line.join(','));
+    });
+    downloadBlob(csvLines.join('\r\n'), 'LATT_Sanitized_NonAttribution_Dataset.csv');
+  }
+
+  function downloadBlob(content, filename) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+function loadSyntheticDemo() {
+  const synthRows = [
+    ["ObservationID","Observation Type","Base","Unit","Date Found","Evaluator","Function","Section","Reference","Details","Recommendation","Training/Corrective Action","Safety","Compliance","Operational Impact","Staff Action","Finding Type","Probability","Severity","Reviewed"],
+    ["XX-26-001","Finding","Alpha Base","101 FW / 101 MXS","02/10/2026","Evaluator A","Maintenance Management","Flightline Operations","DAFI 21-101","Alpha Base 101st MXS tool crib inventory logs had 4 overdue calibrated torque wrenches not quarantined prior to shift turnover.","Enforce automated daily calibration lockouts and supervisor spot checks.","Conducted on-site CTK audit and quarantined items with shop chief.","TRUE","TRUE","High","TRUE","Execution & Supervision","Frequent","Severe","TRUE"],
+    ["XX-26-002","Finding","Alpha Base","101 LRS","02/11/2026","Evaluator B","Materiel Management","Supply & Logistics","DAFMAN 23-122","Bench stock reorder thresholds were outdated in IT system causing recurring zero-balance parts delays.","Recalculate 90-day demand levels and validate weekly exception reports.","Trained inventory clerks on demand-level adjustment workflow.","FALSE","TRUE","High","TRUE","Process / Guidance Gap","Frequent","Significant","TRUE"],
+    ["XX-26-003","Finding","Alpha Base","101 MXG","02/12/2026","Evaluator C","Training","Quality Assurance","DAFI 36-2670","Special certification roster lacked current annual sign-offs for 6 technicians assigned to critical tasks.","Reconcile SCR monthly against training database and restrict tasking until current.","Updated 4 records on-site; 2 scheduled for proficiency eval.","TRUE","TRUE","High","FALSE","Execution & Supervision","Likely","Severe","TRUE"],
+    ["XX-26-004","Recommended Improvement Area","Alpha Base","101 MXS","02/12/2026","Evaluator A","Equipment Management","Support Equipment","TO 00-20-1","Support equipment inspection schedules were tracked on local whiteboards rather than the enterprise fleet portal.","Transition recurring inspection tracking into enterprise portal dashboards.","Demonstrated fleet schedule dashboard setup.","FALSE","FALSE","Moderate","FALSE","Process / Guidance Gap","Occasional","Significant","TRUE"],
+    ["XX-26-005","Best Practice","Alpha Base","101 LRS","02/13/2026","Evaluator B","Materiel Management","Supply & Logistics","N/A","101 LRS built a visual QR-code receiving triage board that cut urgent part dock-to-stock time by 42%.","Share visual workflow template across enterprise logistics teams.","N/A","FALSE","FALSE","Low","FALSE","Strength","N/A","N/A","TRUE"],
+    ["XX-26-006","Finding","Bravo Base","102 FW / 102 AMXS","03/18/2026","Evaluator D","Maintenance Management","Avionics","DAFI 21-101","Supervisor Jane Doe noted shift handover logs omitted open cannibalization actions across two consecutive shifts.","Mandate digital turnover checklist verification by incoming production lead.","Reviewed turnover checklist with flight chiefs on-site.","FALSE","TRUE","High","TRUE","Execution & Supervision","Frequent","Significant","TRUE"],
+    ["XX-26-007","Finding","Bravo Base","102 CES","03/19/2026","Evaluator E","Infrastructure","Facilities","DAFMAN 91-203","Hangar bay ventilation work orders remained open >120 days with no documented interim PPE controls.","Escalate HVAC work order priority and publish interim PPE guidance immediately.","Issued interim safety briefing and logged priority work order.","TRUE","TRUE","High","TRUE","Resource & External Constraints","Frequent","Severe","TRUE"],
+    ["XX-26-008","Finding","Bravo Base","102 MXS","03/20/2026","Evaluator A","Equipment Management","Calibration / TMDE","TO 33K-1-100","Three precision measurement assets lacked secondary tracking tags during transit between shops.","Apply barcode labels at check-out and reconcile custody logs weekly.","Tagged assets and trained tool monitors on-site.","FALSE","TRUE","Moderate","FALSE","Execution & Supervision","Likely","Limited","TRUE"],
+    ["XX-26-009","Finding","Bravo Base","102 FSS","03/21/2026","Evaluator C","Manpower Management","Workforce Planning","DAFI 38-101","Critical 7-level supervisor billets were filled at 62% creating single-point-of-failure shift coverage.","Submit cross-leveling manpower request and cross-train senior 5-levels.","Built interim shift qualification matrix with squadron leadership.","FALSE","FALSE","High","TRUE","Resource & External Constraints","Frequent","Significant","TRUE"],
+    ["XX-26-010","Strength","Bravo Base","102 AMXS","03/21/2026","Evaluator D","Training","Flightline Operations","N/A","Weekly 15-minute hands-on FOD walk briefings achieved zero FOD incidents over 14 consecutive months.","Maintain cadence and publish briefing deck as enterprise benchmark.","N/A","FALSE","FALSE","Low","FALSE","Strength","N/A","N/A","TRUE"],
+    ["XX-26-011","Finding","Charlie Base","103 FW / 103 MXS","05/06/2026","Evaluator A","Maintenance Management","Documentation & Records","TO 00-20-1","Historical maintenance forms contained 11 unsigned corrective-action blocks across 3 sampled logbooks.","Require daily QA records sampling and digital signature validation.","Corrected sampled entries and coached maintainers on-site.","FALSE","TRUE","Moderate","FALSE","Execution & Supervision","Occasional","Significant","TRUE"],
+    ["XX-26-012","Finding","Charlie Base","103 LRS","05/07/2026","Evaluator B","Materiel Management","Munitions / HazMat","DAFMAN 91-201","Hazardous shelf-life inspection labels were faded on 5 storage cabinets creating expiration-tracking risk.","Replace labels with weatherproof thermal tags and add 30-day expiry alerts.","Relabeled affected cabinets on-site.","TRUE","TRUE","High","FALSE","Execution & Supervision","Likely","Severe","TRUE"],
+    ["XX-26-013","Finding","Charlie Base","103 MXG","05/08/2026","Evaluator C","Training","Qualification & OJT","DAFI 36-2670","OJT task sign-offs lacked standardized practical evaluation criteria across night-shift trainers.","Publish standardized task evaluation rubrics and audit 10% monthly.","Reviewed rubric template with unit training managers.","FALSE","TRUE","Moderate","FALSE","Process / Guidance Gap","Likely","Significant","TRUE"],
+    ["XX-26-014","Recommended Improvement Area","Charlie Base","103 CES","05/08/2026","Evaluator E","Infrastructure","Facilities","N/A","Tool room lighting measured below recommended lux levels in rear inspection bay.","Submit facility lighting upgrade work order.","Logged facility improvement ticket.","FALSE","FALSE","Low","FALSE","Resource & External Constraints","Unlikely","Limited","TRUE"],
+    ["XX-26-015","Best Practice","Charlie Base","103 MXG","05/09/2026","Evaluator C","Training","Quality Assurance","N/A","Automated training-expiry dashboard emails supervisors 45 days before any technician certification lapses.","Adopt enterprise-wide via shared Power Automate template.","N/A","FALSE","FALSE","Low","FALSE","Strength","N/A","N/A","TRUE"],
+    ["XX-26-016","Finding","Delta Base","104 FW / 104 AMXS","08/12/2026","Evaluator D","Maintenance Management","Flightline Operations","DAFI 21-101","Checklist steps for pre-flight panel closure were verbally paraphrased rather than read step-by-step.","Re-emphasize technical order verbatim compliance during roll calls.","Observed and corrected step-by-step checklist execution on-site.","TRUE","TRUE","High","FALSE","Execution & Supervision","Frequent","Severe","TRUE"],
+    ["XX-26-017","Finding","Delta Base","104 LRS","08/13/2026","Evaluator B","Materiel Management","Supply & Logistics","DAFMAN 23-122","Enterprise IT system sync lag between supply and maintenance delayed mission-capable part status updates by 24 hours.","Coordinate HQ IT interface patch to shorten batch sync interval to 15 minutes.","Documented error logs for HQ IT escalation.","FALSE","FALSE","High","TRUE","Resource & External Constraints","Frequent","Significant","TRUE"],
+    ["XX-26-018","Finding","Delta Base","104 MXS","08/14/2026","Evaluator A","Equipment Management","Tool & CTK Control","DAFI 21-101","Lost-tool search escalation matrix posted in shop referenced obsolete guidance from 2019.","Update posted matrices to current directive and verify all CTKs quarterly.","Replaced posted matrix and briefed tool custodians.","FALSE","TRUE","Low","FALSE","Process / Guidance Gap","Occasional","Minimal","TRUE"],
+    ["XX-26-019","Finding","Delta Base","104 MXG","08/14/2026","Evaluator C","Manpower Management","Workforce Planning","DAFI 38-101","Unfunded temporary duty taskings reduced home-station inspection capacity by 22% during peak flying window.","Establish HQ tasking deconfliction threshold for undermanned shops.","Escalated utilization metrics to HQ functional managers.","FALSE","FALSE","High","TRUE","Resource & External Constraints","Likely","Severe","TRUE"],
+    ["XX-26-020","Strength","Delta Base","104 MXS","08/15/2026","Evaluator A","Equipment Management","Support Equipment","N/A","Preventive maintenance kitting cart cut scheduled generator service turnaround time from 4 hours to 95 minutes.","Document kitting layout for cross-site replication.","N/A","FALSE","FALSE","Low","FALSE","Strength","N/A","N/A","TRUE"],
+    ["XX-26-021","Finding","Echo Base","105 FW / 105 MXS","11/03/2026","Evaluator A","Maintenance Management","Avionics","TO 00-20-1","Software load verification sheets lacked dual-signature confirmation on 2 sampled test stations.","Enforce two-person verification rule and update digital checklist template.","Updated station checklist and verified compliance on-site.","TRUE","TRUE","High","FALSE","Execution & Supervision","Frequent","Severe","TRUE"],
+    ["XX-26-022","Finding","Echo Base","105 LRS","11/04/2026","Evaluator B","Materiel Management","Supply & Logistics","DAFMAN 23-122","Local supplement conflicted with updated HQ directive on reparable asset turn-in timelines.","Rescind conflicting local supplement and align unit SOP to HQ policy.","Drafted supplement rescission memo with LRS leadership.","FALSE","TRUE","High","TRUE","Process / Guidance Gap","Frequent","Significant","TRUE"],
+    ["XX-26-023","Finding","Echo Base","105 MXG","11/05/2026","Evaluator C","Training","Qualification & OJT","DAFI 36-2670","New-hire onboarding syllabus lacked dedicated module on enterprise reporting system data quality.","Add 2-hour data entry lab to onboarding syllabus.","Conducted live training session for 14 unit supervisors.","FALSE","FALSE","Moderate","FALSE","Process / Guidance Gap","Occasional","Significant","TRUE"],
+    ["XX-26-024","Finding","Echo Base","105 CES","11/05/2026","Evaluator E","Infrastructure","Facilities","DAFMAN 91-203","Eye-wash station inspection tags in battery shop were 45 days overdue.","Assign weekly safety monitor check and integrate into digital calendar.","Flushed stations and updated inspection tags on-site.","TRUE","TRUE","Moderate","FALSE","Execution & Supervision","Occasional","Significant","TRUE"],
+    ["XX-26-025","Recommended Improvement Area","Echo Base","105 MXS","11/06/2026","Evaluator D","Maintenance Management","Quality Assurance","N/A","Quality Assurance trend briefs were archived as static PDFs, limiting multi-quarter drill-down.","Adopt standardized Power BI trend template for quarterly QA reviews.","Walked QA chief through dashboard setup.","FALSE","FALSE","Low","FALSE","Process / Guidance Gap","Unlikely","Minimal","TRUE"],
+    ["XX-26-026","Finding","Echo Base","105 AMXS","11/06/2026","Evaluator D","Equipment Management","Tool & CTK Control","DAFI 21-101","Shadow-board foam inserts in two flightline boxes showed wear that could mask missing fasteners.","Replace worn foam inserts and add quarterly serviceability check.","Submitted replacement order on-site.","FALSE","TRUE","Low","FALSE","Execution & Supervision","Occasional","Limited","TRUE"],
+    ["XX-26-027","Finding","Echo Base","105 LRS","11/06/2026","Evaluator B","Manpower Management","Workforce Planning","DAFI 38-101","Cross-utilization training plan was undocumented for single-deep supply systems specialist billet.","Document primary/alternate coverage plan and initiate cross-training.","Drafted coverage matrix with flight commander.","FALSE","FALSE","Moderate","FALSE","Execution & Supervision","Likely","Limited","TRUE"],
+    ["XX-26-028","Best Practice","Echo Base","105 AMXS","11/07/2026","Evaluator D","Maintenance Management","Flightline Operations","N/A","Echo Base shift-brief KPI wall reduced repeat discrepancy rate by 31% over two quarters.","Package visual management standard for enterprise distribution.","N/A","FALSE","FALSE","Low","FALSE","Strength","N/A","N/A","TRUE"],
+    ["XX-26-029","Finding","Echo Base","105 MXS","11/07/2026","Evaluator A","Maintenance Management","Documentation & Records","TO 00-20-1","Three deferred discrepancy entries lacked updated parts-status remarks past 14-day review gate.","Automate 14-day review reminders in maintenance tracking tool.","Updated entries and configured reminder view.","FALSE","TRUE","Moderate","FALSE","Execution & Supervision","Likely","Limited","TRUE"],
+    ["XX-26-030","Strength","Echo Base","105 LRS","11/07/2026","Evaluator B","Materiel Management","Supply & Logistics","N/A","Proactive pre-deployment kit audit achieved 99.4% inventory accuracy across 1,200 line items.","Recognize workflow in enterprise quarterly benchmark report.","N/A","FALSE","FALSE","Low","FALSE","Strength","N/A","N/A","TRUE"]
+  ];
+  const csv = synthRows.map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  const rows = parseCSV(csv);
+  processData(rows);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Exclude internal OPSEC boundary log, personal EPBs, & raw local scratch artifacts
+SANITIZATION_AUDIT.md
+EPBs/
+*.tmp
+.DS_Store
+Thumbs.db

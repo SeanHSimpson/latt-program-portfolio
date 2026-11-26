@@ -1,0 +1,454 @@
+table StaffActions
+	lineageTag: e7bde145-b9fb-4eb0-8f58-545aebe04032
+
+	measure 'Tracked Actions' = COUNTROWS ( StaffActions ) + 0
+		formatString: 0
+		lineageTag: 292aee61-1c55-4d0d-ace5-4341fc7d5db0
+
+	measure 'Open Actions' = ```
+			
+			        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Closed] = FALSE () ) ) + 0
+			```
+		formatString: 0
+		lineageTag: 783ae8ba-dba7-4d4e-a783-3705a05c5783
+
+	measure 'Closed Actions' = ```
+			
+			        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Closed] = TRUE () ) ) + 0
+			```
+		formatString: 0
+		lineageTag: 77a0db82-0336-4458-8f28-ba3d79ab9601
+
+	measure 'Closed %' = DIVIDE ( [Closed Actions], [Tracked Actions] )
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: ecf3002e-ccc5-4d19-81e9-75611c959f66
+
+	measure 'Awaiting First Update' = ```
+			
+			        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Update Status] = "Awaiting First Update" ) ) + 0
+			```
+		formatString: 0
+		lineageTag: 0983c709-7703-44b0-8ea7-f8849dc31b6c
+
+	measure 'Stale Actions' = ```
+			
+			        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Update Status] = "Stale (30+ Days)" ) ) + 0
+			```
+		formatString: 0
+		lineageTag: ca95bb74-658d-4574-9197-e1a077df0a77
+
+	measure 'Unassigned Actions' = ```
+			
+			        CALCULATE ( [Open Actions], KEEPFILTERS ( StaffActions[Office Symbol] = "Unassigned" ) ) + 0
+			```
+		formatString: 0
+		lineageTag: 795b11c6-d4aa-42dd-b9ab-f071d1f1439e
+
+	measure 'Uncategorized Actions' = ```
+			
+			        CALCULATE ( [Open Actions], KEEPFILTERS ( StaffActions[Category] = "Not Categorized" ) ) + 0
+			```
+		formatString: 0
+		lineageTag: 80c8dfaf-fa33-4ebe-9f1b-dfa00cc0fb57
+
+	measure 'Overdue Actions' = ```
+			
+			        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Due Status] = "Overdue" ) ) + 0
+			```
+		formatString: 0
+		lineageTag: 70150110-3d47-4314-90db-d1411069a495
+
+	measure 'Due in 30 Days' = ```
+			
+			        CALCULATE ( COUNTROWS ( StaffActions ), KEEPFILTERS ( StaffActions[Due Status] = "Due in 30 Days" ) ) + 0
+			```
+		formatString: 0
+		lineageTag: da61032d-41ac-49a4-a6a3-1999537e352e
+
+	measure 'Avg Days Open' = AVERAGE ( StaffActions[Days Open] )
+		formatString: 0
+		lineageTag: d4a62aac-9ae0-4c73-a2a9-61fe0c1a3a8c
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	measure 'Not Yet in Tracker' = ```
+			
+			        MAX (
+			            0,
+			            CALCULATE ( [Staff Action Items], REMOVEFILTERS () )
+			                - CALCULATE ( COUNTROWS ( StaffActions ), REMOVEFILTERS () )
+			        )
+			```
+		formatString: 0
+		lineageTag: da9c4691-03e7-4035-9bb1-b7e82b435c12
+
+	measure 'Due Status Color' = ```
+			
+			        SWITCH (
+			            SELECTEDVALUE ( StaffActions[Due Status] ),
+			            "Overdue", "#FECACA",
+			            "Due in 30 Days", "#FEF08A",
+			            "On Track", "#BBF7D0",
+			            "No Target Date", "#E2E8F0",
+			            "Closed", "#F1F5F9"
+			        )
+			```
+		lineageTag: 3dbfe420-e17b-4080-9578-f0f672747c1b
+
+	measure 'Update Status Color' = ```
+			
+			        SWITCH (
+			            SELECTEDVALUE ( StaffActions[Update Status] ),
+			            "Awaiting First Update", "#FED7AA",
+			            "Stale (30+ Days)", "#FEF08A",
+			            "Current", "#BBF7D0",
+			            "Closed", "#F1F5F9"
+			        )
+			```
+		lineageTag: 537663cd-66c8-4bb3-b9ed-420cfebf757f
+
+	measure 'BLUF 4 Staff Actions' = ```
+			
+			        FORMAT ( [Tracked Actions], "#,0" ) & " staff action items tracked: "
+			            & FORMAT ( [Open Actions], "#,0" ) & " open, "
+			            & FORMAT ( [Overdue Actions], "#,0" ) & " past target date, "
+			            & FORMAT ( [Awaiting First Update], "#,0" ) & " awaiting a first POC update, "
+			            & FORMAT ( [Unassigned Actions], "#,0" ) & " with no office assigned."
+			```
+		lineageTag: de0d70fb-4f2c-454d-b987-d24c4f345d68
+
+	column 'SA Number'
+		dataType: int64
+		formatString: 0
+		lineageTag: 908e14fc-0160-4032-8fe2-85f26175f34b
+		summarizeBy: none
+		sourceColumn: SA Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'SA ID'
+		dataType: string
+		lineageTag: c515dce7-ec13-482c-94a5-5bb79a1a239d
+		summarizeBy: none
+		sourceColumn: SA ID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: ce6d56b1-266f-4c18-9ea2-ebd621594cba
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Closed
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: b3832f05-c2b7-4b64-851d-468ee617726a
+		summarizeBy: none
+		sourceColumn: Closed
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Due Status'
+		dataType: string
+		lineageTag: 7c4bf3f4-0407-4363-87df-2af72507be00
+		summarizeBy: none
+		sourceColumn: Due Status
+		sortByColumn: 'Due Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Update Status'
+		dataType: string
+		lineageTag: 5ffccef5-c2cf-4da1-b6e7-e1a833f29a7b
+		summarizeBy: none
+		sourceColumn: Update Status
+		sortByColumn: 'Update Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Date Found'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c2523832-5a8b-4bfa-875f-59357fe0ae3e
+		summarizeBy: none
+		sourceColumn: Date Found
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Target Close Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b798d49c-32b0-49bd-8ddb-afe3735609c7
+		summarizeBy: none
+		sourceColumn: Target Close Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Target Month'
+		dataType: string
+		lineageTag: 5c4e6458-5e83-4cd3-a440-1fd7cb84b412
+		summarizeBy: none
+		sourceColumn: Target Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Last Updated'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 680b7056-bbcc-4686-8c6f-5b9a57840bad
+		summarizeBy: none
+		sourceColumn: Last Updated
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Days Open'
+		dataType: int64
+		formatString: 0
+		lineageTag: 30b9127e-9b89-4e37-a250-76dde6041fc9
+		summarizeBy: none
+		sourceColumn: Days Open
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Days to Target'
+		dataType: int64
+		formatString: 0
+		lineageTag: 35e93143-eb28-4cd9-a4bc-7a08af269cb3
+		summarizeBy: none
+		sourceColumn: Days to Target
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Observation Type'
+		dataType: string
+		lineageTag: ca1d30a0-a017-496a-b3be-a27ff5a50f30
+		summarizeBy: none
+		sourceColumn: Observation Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Function
+		dataType: string
+		lineageTag: 5cfaa68e-d668-41f7-a570-9f671d009cc6
+		summarizeBy: none
+		sourceColumn: Function
+
+		annotation SummarizationSetBy = Automatic
+
+	column Section
+		dataType: string
+		lineageTag: 8472c652-dc43-4b59-8f94-618c40912964
+		summarizeBy: none
+		sourceColumn: Section
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Finding Type'
+		dataType: string
+		lineageTag: 06cc2d91-c67a-41d9-a939-51c634300236
+		summarizeBy: none
+		sourceColumn: Finding Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column Reference
+		dataType: string
+		lineageTag: af1194d8-d04e-4855-bc27-980adb9071be
+		summarizeBy: none
+		sourceColumn: Reference
+
+		annotation SummarizationSetBy = Automatic
+
+	column Details
+		dataType: string
+		lineageTag: a37b8d40-62b6-4d25-85b9-431e9c322bba
+		summarizeBy: none
+		sourceColumn: Details
+
+		annotation SummarizationSetBy = Automatic
+
+	column Recommendation
+		dataType: string
+		lineageTag: 369ba087-cac5-4121-bb6d-518e880a4614
+		summarizeBy: none
+		sourceColumn: Recommendation
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: a007b643-aa41-4636-9a89-f46292aa3ed9
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Office Symbol'
+		dataType: string
+		lineageTag: 8fe5fd52-e8e7-4150-9cd7-bdfbd22ae074
+		summarizeBy: none
+		sourceColumn: Office Symbol
+
+		annotation SummarizationSetBy = Automatic
+
+	column Updates
+		dataType: string
+		lineageTag: 9293ba93-c814-4ed4-bb34-648f0b096dbf
+		summarizeBy: none
+		sourceColumn: Updates
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Edit Link'
+		dataType: string
+		lineageTag: 65fc6582-1085-4476-b6b7-c84e904c8188
+		dataCategory: WebUrl
+		summarizeBy: none
+		sourceColumn: Edit Link
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Due Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 6a0ca2ff-c140-4ca7-8584-b5da7a1f88ab
+		summarizeBy: none
+		sourceColumn: Due Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Update Sort'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: fadfd478-ee8f-48e4-9008-96a45b0527ab
+		summarizeBy: none
+		sourceColumn: Update Sort
+
+		changedProperty = IsHidden
+
+		annotation SummarizationSetBy = Automatic
+
+	partition StaffActions = m
+		mode: import
+		source =
+				let
+				    // ---------------------------------------------------------------------------
+				    // SOURCE: the "HQ Staff Action Items" SharePoint list (filled by the Power Automate flow).
+				    // ---------------------------------------------------------------------------
+				    RawSource =
+				        let
+				            Site = SharePoint.Tables(StaffActionsSiteUrl, [Implementation = "2.0", ViewMode = "All"]),
+				            Items = Table.SelectRows(Site, each [Title] = StaffActionsListName){0}[Items]
+				        in
+				            Items,
+				
+				    // ---- NON-ATTRIBUTION FIREWALL: allow-list only ----
+				    // Deliberately left out: ObservationID (its prefix reveals the base), Base, Unit, Evaluator,
+				    // POC (a person's name) and the SharePoint Created By / Modified By columns.
+				    // A column that is missing in the source comes through empty instead of causing an error,
+				    // so check the result once: every column below should have values where you expect them.
+				    Keep = Table.SelectColumns(RawSource, {
+				        "ID", "Observation Type", "Date Found", "Function", "Section", "Reference", "Details",
+				        "Recommendation", "Finding Type", "Category", "Office Symbol", "Updates", "Last Updated",
+				        "Target Close Date", "Closed"}, MissingField.UseNull),
+				    Indexed = Table.AddIndexColumn(Keep, "RowNo", 1, 1, Int64.Type),
+				
+				    // Everything a person can type into gets scrubbed, including the columns the POCs fill in.
+				    Scrubbed = {"Details", "Recommendation", "Reference", "Updates", "Category", "Office Symbol"},
+				    ChoiceText = {"Observation Type", "Function", "Section", "Finding Type"},
+				
+				    Typed = Table.TransformColumns(Indexed,
+				        {{"Date Found", fnToDate, type nullable date},
+				         {"Last Updated", fnToDate, type nullable date},
+				         {"Target Close Date", fnToDate, type nullable date},
+				         {"Closed", fnToBool, type logical}}
+				        & List.Transform(Scrubbed, (c) => {c, each fnSanitize(fnCleanText(_)), type text})
+				        & List.Transform(ChoiceText, (c) => {c, each fnCleanText(_), type text})),
+				
+				    SectionFixes = Table.ReplaceValue(Typed, "Avionic (Flightline)", "Avionics (Flightline)", Replacer.ReplaceValue, {"Section"}),
+				
+				    // Neutral ID: SA-001, SA-002 ... from the SharePoint item ID (row number only if the list has no ID)
+				    AddNumber = Table.AddColumn(SectionFixes, "SA Number", each
+				        if [ID] = null or [ID] = "" then [RowNo] else Int64.From([ID]), Int64.Type),
+				    AddId = Table.AddColumn(AddNumber, "SA ID", each "SA-" & Text.PadStart(Text.From([SA Number]), 3, "0"), type text),
+				
+				    // Blanks in the POC-filled columns get a label so they show up on charts as work still to do
+				    Relabeled = Table.TransformColumns(AddId, {
+				        {"Function", each if _ = "" then "Not Assigned" else _, type text},
+				        {"Section", each if _ = "" then "Not Assigned" else _, type text},
+				        {"Finding Type", each if _ = "" then "Not Classified" else _, type text},
+				        {"Observation Type", each if _ = "" then "Unspecified" else _, type text},
+				        {"Reference", each if _ = "" then "Uncited" else _, type text},
+				        {"Category", each if _ = "" then "Not Categorized" else _, type text},
+				        {"Office Symbol", each if _ = "" then "Unassigned" else Text.Upper(_), type text}}),
+				
+				    // ---- Status columns (recalculated on every refresh) ----
+				    Today = Date.From(DateTime.LocalNow()),
+				    DueSoonDays = 30,
+				    StaleDays = 30,
+				
+				    AddStatus = Table.AddColumn(Relabeled, "Status", each if [Closed] then "Closed" else "Open", type text),
+				
+				    AddDue = Table.AddColumn(AddStatus, "Due Status", each
+				        if [Closed] then "Closed"
+				        else if [Target Close Date] = null then "No Target Date"
+				        else if [Target Close Date] < Today then "Overdue"
+				        else if [Target Close Date] <= Date.AddDays(Today, DueSoonDays) then "Due in 30 Days"
+				        else "On Track", type text),
+				
+				    AddUpdate = Table.AddColumn(AddDue, "Update Status", each
+				        if [Closed] then "Closed"
+				        else if [Updates] = "" then "Awaiting First Update"
+				        else if [Last Updated] = null or Duration.Days(Today - [Last Updated]) > StaleDays then "Stale (30+ Days)"
+				        else "Current", type text),
+				
+				    AddDaysOpen = Table.AddColumn(AddUpdate, "Days Open", each
+				        if [Closed] or [Date Found] = null then null else Duration.Days(Today - [Date Found]), Int64.Type),
+				    AddDaysToTarget = Table.AddColumn(AddDaysOpen, "Days to Target", each
+				        if [Closed] or [Target Close Date] = null then null else Duration.Days([Target Close Date] - Today), Int64.Type),
+				    AddTargetMonth = Table.AddColumn(AddDaysToTarget, "Target Month", each
+				        if [Target Close Date] = null then "No Target Date" else Date.ToText([Target Close Date], "yyyy-MM"), type text),
+				
+				    // Sort-order helper columns (Column tools > Sort by column)
+				    AddDueSort = Table.AddColumn(AddTargetMonth, "Due Sort", each
+				        List.PositionOf({"Overdue", "Due in 30 Days", "On Track", "No Target Date", "Closed"}, [Due Status]) + 1, Int64.Type),
+				    AddUpdateSort = Table.AddColumn(AddDueSort, "Update Sort", each
+				        List.PositionOf({"Awaiting First Update", "Stale (30+ Days)", "Current", "Closed"}, [Update Status]) + 1, Int64.Type),
+				
+				    // Link that opens the item's edit form in SharePoint
+				    AddLink = Table.AddColumn(AddUpdateSort, "Edit Link", each
+				        if [ID] = null or [ID] = "" then null
+				        else StaffActionsSiteUrl & "/Lists/" & Uri.EscapeDataString(StaffActionsListUrlName)
+				             & "/EditForm.aspx?ID=" & Text.From([SA Number]), type text),
+				
+				    Final = Table.SelectColumns(AddLink, {
+				        "SA Number", "SA ID", "Status", "Closed", "Due Status", "Update Status",
+				        "Date Found", "Target Close Date", "Target Month", "Last Updated", "Days Open", "Days to Target",
+				        "Observation Type", "Function", "Section", "Finding Type", "Reference",
+				        "Details", "Recommendation", "Category", "Office Symbol", "Updates",
+				        "Edit Link", "Due Sort", "Update Sort"}),
+				    Buffered = Table.Buffer(Final)
+				in
+				    Buffered
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

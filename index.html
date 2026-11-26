@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Program Management Career Portfolio — 0-to-1 Operational Assessment Governance, Low-Code Workflow Design, Non-Attribution Reporting & Closed-Loop Target-Timeline (SLA) Tracking." />
+  <title>Program Management Portfolio | 0-to-1 Operational Governance &amp; Analytics System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --bg-alt: #f1f5f9;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --tint-blue: #eff6ff;
+      --tint-blue-border: #bfdbfe;
+      --navy: #0f172a;
+      --brand-dark: #0f2942;
+      --primary: #1d4ed8;
+      --primary-hover: #1e40af;
+      --text: #0f172a;
+      --text-body: #334155;
+      --muted: #475569;
+      --subtle: #64748b;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --emerald: #047857;
+      --emerald-bg: #ecfdf5;
+      --emerald-border: #a7f3d0;
+      --amber: #b45309;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --rose: #be123c;
+      --rose-bg: #fff1f2;
+      --rose-border: #fecdd3;
+      --nav-glass: rgba(255, 255, 255, 0.88);
+      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 12px 28px -8px rgba(15, 23, 42, 0.09);
+      --shadow-lg: 0 24px 48px -12px rgba(15, 23, 42, 0.16);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b1120;
+      --bg-alt: #0f172a;
+      --surface: #131c31;
+      --surface-muted: #18233c;
+      --tint-blue: rgba(37, 99, 235, 0.15);
+      --tint-blue-border: rgba(96, 165, 250, 0.3);
+      --navy: #f8fafc;
+      --brand-dark: #1e293b;
+      --primary: #60a5fa;
+      --primary-hover: #93c5fd;
+      --text: #f8fafc;
+      --text-body: #cbd5e1;
+      --muted: #94a3b8;
+      --subtle: #94a3b8;
+      --border: #1e293b;
+      --border-strong: #334155;
+      --emerald: #34d399;
+      --emerald-bg: rgba(16, 185, 129, 0.14);
+      --emerald-border: rgba(52, 211, 153, 0.3);
+      --amber: #fbbf24;
+      --amber-bg: rgba(245, 158, 11, 0.14);
+      --amber-border: rgba(251, 191, 36, 0.3);
+      --rose: #fb7185;
+      --rose-bg: rgba(244, 63, 94, 0.14);
+      --rose-border: rgba(251, 113, 133, 0.3);
+      --nav-glass: rgba(15, 23, 42, 0.88);
+      --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-sm: 0 6px 16px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 14px 32px -8px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 24px 54px -12px rgba(0, 0, 0, 0.65);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--navy);
+      letter-spacing: -0.022em;
+      line-height: 1.2;
+    }
+
+    code, pre {
+      font-family: "JetBrains Mono", Consolas, monospace;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; }
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 6px; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+    @media (max-width: 640px) {
+      .container { padding: 0 18px; }
+    }
+
+    /* =========================================================================
+       1. FLOATING SPACIOUS NAVBAR (Never wraps or smashes)
+       ========================================================================= */
+    .nav-wrap {
+      position: sticky;
+      top: 14px;
+      z-index: 100;
+      padding: 0 20px;
+      margin-top: 14px;
+    }
+    .navbar {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--nav-glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .nav-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #1d4ed8, #0f2942);
+      color: #ffffff;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .nav-brand-name {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-weight: 800;
+      font-size: 0.96rem;
+      color: var(--navy);
+    }
+    .nav-brand-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--tint-blue);
+      color: var(--primary);
+      border: 1px solid var(--tint-blue-border);
+    }
+    @media (max-width: 480px) { .nav-brand-pill { display: none; } }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+    .nav-links a {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+    .nav-links a:hover {
+      background: var(--bg-alt);
+      color: var(--navy);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .nav-sop-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border-strong);
+      transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+    }
+    .nav-sop-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--tint-blue);
+    }
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+    .icon-btn:hover { border-color: var(--primary); background: var(--tint-blue); }
+    .mobile-menu-btn { display: none; }
+
+    .mobile-drawer {
+      display: none;
+      max-width: 1200px;
+      margin: 8px auto 0;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: var(--shadow-md);
+    }
+    .mobile-drawer.open { display: grid; gap: 4px; }
+    .mobile-drawer a {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+    .mobile-drawer a:hover { background: var(--bg-alt); color: var(--primary); }
+
+    @media (max-width: 1020px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: grid; }
+    }
+    @media (max-width: 600px) {
+      .nav-sop-btn span { display: none; }
+    }
+
+    /* =========================================================================
+       2. BUTTONS & UNIFIED LINK SYSTEM
+       ========================================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+      transition: all 0.18s ease;
+    }
+    .btn-primary {
+      background: #1d4ed8;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
+    }
+    .btn-primary:hover { background: #1e40af; }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--navy);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-xs);
+    }
+    .btn-secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--tint-blue);
+    }
+
+    .action-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.87rem;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      transition: gap 0.18s ease, color 0.18s ease;
+    }
+    .action-link:hover {
+      color: var(--primary-hover);
+      gap: 9px;
+    }
+
+    /* =========================================================================
+       3. EDITORIAL SPACIOUS HERO
+       ========================================================================= */
+    .hero {
+      padding: 64px 0 56px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 48px;
+      align-items: start;
+    }
+    @media (max-width: 980px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .badge-blue {
+      background: var(--tint-blue);
+      color: var(--primary);
+      border: 1px solid var(--tint-blue-border);
+    }
+    .badge-green {
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      border: 1px solid var(--emerald-border);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.15rem, 3.8vw, 3.1rem);
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.15;
+    }
+    .hero h1 span { color: var(--primary); }
+
+    .hero-lead {
+      font-size: 1.08rem;
+      color: var(--text-body);
+      margin-bottom: 28px;
+      max-width: 660px;
+      line-height: 1.72;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .competency-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .comp-chip {
+      font-size: 0.79rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    /* Right Hero Card: Authentic PM + AI/Low-Code Transparency Callout */
+    .pm-approach-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+    .pm-approach-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #1d4ed8, #059669);
+    }
+    .pm-card-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .pm-approach-card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+    .pm-approach-card p {
+      font-size: 0.9rem;
+      color: var(--text-body);
+      margin-bottom: 18px;
+      line-height: 1.62;
+    }
+    .pm-split-list {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .pm-split-list li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .pm-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: var(--tint-blue);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      margin-top: 1px;
+    }
+    .pm-split-list strong { color: var(--navy); }
+
+    /* =========================================================================
+       4. STRUCTURED IMPACT METRICS ROW (Spacious, zero overlap)
+       ========================================================================= */
+    .metrics-section {
+      padding: 0 0 72px;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 1024px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px) { .kpi-grid { grid-template-columns: 1fr; } }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .kpi-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--subtle);
+    }
+    .kpi-slot-pill {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--bg-alt);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    .kpi-value {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-size: 1.65rem;
+      font-weight: 800;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+    }
+    .kpi-desc {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.52;
+    }
+
+    /* =========================================================================
+       5. SECTION HEADERS & RHYTHM
+       ========================================================================= */
+    .section {
+      padding: 84px 0;
+    }
+    .section-tinted {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .section-header {
+      max-width: 760px;
+      margin-bottom: 44px;
+    }
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    .section-header h2 {
+      font-size: clamp(1.65rem, 2.6vw, 2.25rem);
+      margin-bottom: 14px;
+    }
+    .section-header p {
+      font-size: 1.02rem;
+      color: var(--muted);
+      line-height: 1.68;
+    }
+
+    /* =========================================================================
+       6. 4-STAGE LIFECYCLE ARCHITECTURE (Responsive HTML/CSS Grid — Never Clips!)
+       ========================================================================= */
+    .lifecycle-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      align-items: stretch;
+    }
+    @media (max-width: 1080px) { .lifecycle-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .lifecycle-grid { grid-template-columns: 1fr; } }
+
+    .stage-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      box-shadow: var(--shadow-xs);
+      position: relative;
+    }
+    .stage-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stage-step {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--tint-blue);
+      color: var(--primary);
+      border: 1px solid var(--tint-blue-border);
+    }
+    .stage-step.privacy {
+      background: var(--rose-bg);
+      color: var(--rose);
+      border-color: var(--rose-border);
+    }
+    .stage-step.sla {
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      border-color: var(--emerald-border);
+    }
+    .stage-window {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--subtle);
+    }
+    .stage-card h3 {
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+    }
+    .stage-card p {
+      font-size: 0.86rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+    .stage-items {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .stage-items li {
+      font-size: 0.82rem;
+      color: var(--text-body);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.45;
+    }
+    .stage-items li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 7px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .stage-artifact-tag {
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.73rem;
+      color: var(--subtle);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* =========================================================================
+       7. THREE PROGRAM MODULES (Clean Stacked Footers — No Wrapped Button Collisions)
+       ========================================================================= */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    @media (max-width: 1024px) { .modules-grid { grid-template-columns: 1fr; } }
+
+    .module-card {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 24px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .module-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+    .module-card.future-slot {
+      border-style: dashed;
+      background: var(--surface-muted);
+    }
+    .module-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .module-id {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .status-pill {
+      font-size: 0.71rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      border: 1px solid var(--emerald-border);
+    }
+    .status-pill.staged {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border-color: var(--amber-border);
+    }
+    .module-card h3 {
+      font-size: 1.24rem;
+      margin-bottom: 10px;
+    }
+    .module-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .module-points {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+    }
+    .module-points li {
+      font-size: 0.85rem;
+      color: var(--text-body);
+      padding-left: 20px;
+      position: relative;
+      line-height: 1.55;
+    }
+    .module-points li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 7px;
+      height: 7px;
+      border-radius: 2px;
+      background: var(--primary);
+    }
+    .module-links {
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* =========================================================================
+       8. INTERACTIVE LIVE DEMOS (Sleek Browser Window Chrome + Segmented Switcher)
+       ========================================================================= */
+    .app-window {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .app-topbar {
+      background: #0f2942;
+      color: #ffffff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .app-switcher {
+      display: inline-flex;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .seg-btn {
+      background: transparent;
+      color: #cbd5e1;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 7px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .seg-btn:hover { color: #ffffff; }
+    .seg-btn.active {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+    .app-ext-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      white-space: nowrap;
+      transition: background 0.18s ease;
+    }
+    .app-ext-btn:hover { background: rgba(255, 255, 255, 0.2); }
+
+    .app-guide-bar {
+      background: var(--tint-blue);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 22px;
+      font-size: 0.85rem;
+      color: var(--text-body);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .app-guide-bar code {
+      font-size: 0.76rem;
+      color: var(--muted);
+      background: var(--surface);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+    .demo-iframe {
+      width: 100%;
+      height: 760px;
+      border: none;
+      display: block;
+      background: #f1f5f9;
+    }
+
+    /* =========================================================================
+       9. ARTIFACT GALLERY (Balanced 3-Col Grid + Aspect-Ratio Frame)
+       ========================================================================= */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .filter-chip {
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border-strong);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .filter-chip:hover { border-color: var(--primary); color: var(--primary); }
+    .filter-chip.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+    @media (max-width: 980px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 620px) { .gallery-grid { grid-template-columns: 1fr; } }
+
+    .shot-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: var(--shadow-xs);
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .shot-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+    .shot-preview {
+      aspect-ratio: 16 / 10;
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .shot-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top left;
+      display: block;
+    }
+    .shot-badge {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      background: rgba(15, 23, 42, 0.82);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .shot-info {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .shot-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+    }
+    .shot-info h3 { font-size: 0.98rem; line-height: 1.35; }
+    .shot-info p { font-size: 0.83rem; color: var(--muted); line-height: 1.52; }
+
+    /* =========================================================================
+       10. BUSINESS RULES & SYSTEM LOGIC VIEWER (PM-Led Framing + Clean File Cards)
+       ========================================================================= */
+    .logic-panel {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .logic-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 14px 18px;
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+    }
+    .logic-tab-btn {
+      background: var(--surface);
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.83rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+    .logic-tab-btn:hover { border-color: var(--primary); color: var(--navy); }
+    .logic-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .logic-body {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+    }
+    @media (max-width: 960px) { .logic-body { grid-template-columns: 1fr; } }
+
+    .logic-pm-brief {
+      padding: 28px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      .logic-pm-brief { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+    .logic-pm-brief h3 {
+      font-size: 1.18rem;
+      margin-bottom: 12px;
+    }
+    .pm-rule-block {
+      margin-bottom: 14px;
+    }
+    .pm-rule-block strong {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .pm-rule-block p {
+      font-size: 0.88rem;
+      color: var(--text-body);
+      line-height: 1.58;
+    }
+
+    .logic-code-box {
+      background: #0f172a;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .logic-code-hdr {
+      padding: 12px 18px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .logic-code-hdr code {
+      font-size: 0.78rem;
+      color: #93c5fd;
+    }
+    .logic-code-pre {
+      padding: 20px;
+      color: #e2e8f0;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      max-height: 380px;
+      overflow-y: auto;
+    }
+
+    /* Clean Document Directory Cards */
+    .doc-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 28px;
+    }
+    @media (max-width: 1024px) { .doc-cards-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 580px) { .doc-cards-grid { grid-template-columns: 1fr; } }
+
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+    .doc-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .doc-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .doc-ext {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--tint-blue);
+      color: var(--primary);
+    }
+    .doc-arrow {
+      color: var(--subtle);
+      transition: transform 0.18s ease, color 0.18s ease;
+    }
+    .doc-card:hover .doc-arrow {
+      color: var(--primary);
+      transform: translate(2px, -2px);
+    }
+    .doc-card strong {
+      display: block;
+      font-size: 0.92rem;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .doc-card span {
+      display: block;
+      font-size: 0.81rem;
+      color: var(--muted);
+      line-height: 1.48;
+    }
+
+    /* =========================================================================
+       11. DEFENSE-TO-CIVILIAN PM CROSSWALK & OPSEC ATTESTATION
+       ========================================================================= */
+    .crosswalk-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 980px) { .crosswalk-layout { grid-template-columns: 1fr; } }
+
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+    }
+    table.crosswalk {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+    }
+    table.crosswalk th {
+      background: #0f2942;
+      color: #ffffff;
+      text-align: left;
+      padding: 14px 18px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    table.crosswalk td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-body);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+    table.crosswalk tr:last-child td { border-bottom: none; }
+    table.crosswalk td:first-child { font-weight: 600; color: var(--navy); width: 42%; }
+
+    .attestation-card {
+      background: var(--surface);
+      border: 1px solid var(--emerald-border);
+      border-top: 4px solid var(--emerald);
+      border-radius: var(--radius-md);
+      padding: 26px;
+      box-shadow: var(--shadow-xs);
+    }
+    .attestation-card h3 {
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .attestation-card p {
+      font-size: 0.87rem;
+      color: var(--text-body);
+      margin-bottom: 16px;
+      line-height: 1.58;
+    }
+    .attest-list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .attest-list li {
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding-left: 20px;
+      position: relative;
+      line-height: 1.48;
+    }
+    .attest-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--emerald);
+      font-weight: 800;
+    }
+
+    /* =========================================================================
+       12. LIGHTBOX MODAL & FOOTER
+       ========================================================================= */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(11, 17, 32, 0.88);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-box {
+      max-width: 1120px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .lightbox-hdr {
+      background: #0f2942;
+      color: #ffffff;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .lightbox-hdr h3 { color: #ffffff; font-size: 0.98rem; }
+    .lb-actions { display: flex; gap: 8px; }
+    .lb-btn {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .lb-btn:hover { background: rgba(255, 255, 255, 0.26); }
+    .lightbox-stage {
+      background: #0b1120;
+      max-height: 72vh;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+    }
+    .lightbox-stage img {
+      max-width: 100%;
+      max-height: 68vh;
+      object-fit: contain;
+      border-radius: 6px;
+    }
+    .lightbox-ftr {
+      padding: 14px 20px;
+      font-size: 0.86rem;
+      color: var(--text-body);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    footer {
+      background: #0b1120;
+      color: #94a3b8;
+      padding: 40px 0;
+      border-top: 1px solid #1e293b;
+      font-size: 0.85rem;
+    }
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-nav {
+      display: flex;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+    .footer-nav a {
+      color: #cbd5e1;
+      font-weight: 500;
+      transition: color 0.18s ease;
+    }
+    .footer-nav a:hover { color: #60a5fa; }
+  </style>
+</head>
+<body id="top">
+
+  <!-- Floating Spacious Navigation -->
+  <div class="nav-wrap">
+    <nav class="navbar" aria-label="Primary Portfolio Navigation">
+      <a href="#top" class="nav-brand">
+        <div class="nav-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <span class="nav-brand-name">LATT Portfolio</span>
+        <span class="nav-brand-pill">Program Manager</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#lifecycle">Lifecycle</a></li>
+        <li><a href="#modules">Program Modules</a></li>
+        <li><a href="#live-demos">Live Demos</a></li>
+        <li><a href="#gallery">Artifacts</a></li>
+        <li><a href="#system-logic">Business Rules</a></li>
+        <li><a href="#crosswalk">Civilian Fit</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="docs/LATT_SOP_Sanitized.docx" class="nav-sop-btn" download>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>45-Page SOP</span>
+        </a>
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch Light or Dark Theme" title="Toggle Light / Dark Mode">
+          <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" type="button" aria-label="Open Navigation Menu" aria-expanded="false">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </nav>
+
+    <div class="mobile-drawer" id="mobileDrawer">
+      <a href="#lifecycle" onclick="closeMobileMenu()">270-Day Lifecycle</a>
+      <a href="#modules" onclick="closeMobileMenu()">Program Modules</a>
+      <a href="#live-demos" onclick="closeMobileMenu()">Interactive Demos</a>
+      <a href="#gallery" onclick="closeMobileMenu()">UI &amp; Governance Artifacts</a>
+      <a href="#system-logic" onclick="closeMobileMenu()">Business Rules &amp; System Logic</a>
+      <a href="#crosswalk" onclick="closeMobileMenu()">Civilian PM Crosswalk</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="badge-row">
+          <span class="badge badge-blue">Program Founder &amp; Program Manager</span>
+          <span class="badge badge-green">100% Unclassified • Synthetic Demo Data</span>
+        </div>
+        <h1>Building a 0-to-1 Enterprise Assessment &amp; <span>Action-Tracking Operating System</span></h1>
+        <p class="hero-lead">
+          As Founder and Program Manager of the <strong>Logistics Assessment and Training Team (LATT)</strong>, I turned an abstract multi-site evaluation concept into a repeatable enterprise program—establishing the 45-page governance playbook, critical-path milestones, standardized risk scoring, non-attribution reporting workflows, and 180-day executive accountability.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#live-demos" class="btn btn-primary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Explore Interactive Dashboard Demos
+          </a>
+          <a href="docs/LATT_SOP_Sanitized.docx" class="btn btn-secondary" download>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Download 45-Page Sanitized SOP
+          </a>
+        </div>
+
+        <div class="competency-row" aria-label="Core Program Management Domains">
+          <span class="comp-chip">0-to-1 Program Charter &amp; Governance</span>
+          <span class="comp-chip">Cross-Functional RACI &amp; Enablement</span>
+          <span class="comp-chip">Operational Risk Matrices</span>
+          <span class="comp-chip">Action-Item Timelines (SLAs)</span>
+          <span class="comp-chip">Low-Code &amp; AI-Assisted Tooling</span>
+        </div>
+      </div>
+
+      <!-- Authentic PM + Low-Code/AI Transparency Callout -->
+      <aside class="pm-approach-card" aria-label="Role Clarity and How This System Was Built">
+        <div class="pm-card-kicker">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Role Clarity &amp; How I Built This
+        </div>
+        <h2>Program Manager First — Not a Software Developer</h2>
+        <p>
+          I am an operational <strong>Program Manager</strong>, not a traditional coder. Operating with zero dedicated software engineers in a locked-down enterprise IT environment, I designed the governance rules and used Microsoft low-code tools plus AI-assisted scripting to ship working tools fast:
+        </p>
+        <ul class="pm-split-list">
+          <li>
+            <span class="pm-check" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span><strong>Owned as Program Manager:</strong> Problem framing, 45-page SOP, Leadership Triad RACI, 62-task schedule gates, 4×4 risk scoring math, privacy policy, and 180-day target-timeline (SLA) governance.</span>
+          </li>
+          <li>
+            <span class="pm-check" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span><strong>Translated via Low-Code &amp; AI:</strong> Directed SharePoint/Power Apps forms, Power Query transformation rules, and Power BI executive dashboards—validating every calculation against operational reality.</span>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </header>
+
+  <!-- Structured Program KPI Strip -->
+  <section class="metrics-section" aria-label="Program Impact Summary">
+    <div class="container">
+      <div class="kpi-grid" id="kpiStrip"></div>
+    </div>
+  </section>
+
+  <!-- Section 1: 270-Day End-to-End Lifecycle (Clean Responsive Grid — Zero Cramped SVG Text) -->
+  <section id="lifecycle" class="section section-tinted">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">End-to-End Operating Rhythm</span>
+        <h2>How the 270-Day Program Lifecycle Connects</h2>
+        <p>
+          Before LATT, multi-site evaluations varied by team, out-briefs required hours of manual copy-paste after cutoff, unit attribution discouraged candid reporting, and escalated headquarters issues had no tracking to closure. I connected all four phases into one repeatable system.
+        </p>
+      </div>
+
+      <div class="lifecycle-grid">
+        <article class="stage-card">
+          <div>
+            <div class="stage-top-bar">
+              <span class="stage-step">STAGE 01</span>
+              <span class="stage-window">T-90 to T-7 Days</span>
+            </div>
+            <h3>Intake, Readiness &amp; Governance</h3>
+            <p>Aligns cross-functional evaluators and host sites months ahead of arrival so on-site execution starts at full speed.</p>
+            <ul class="stage-items">
+              <li>45-page SOP defining Leadership Triad (Lead, Chief, Action Officer)</li>
+              <li>62-task dynamic Visit Milestone Tracker driven off Day-1 date</li>
+              <li>Standardized pre-visit RFI intake &amp; 6 functional checklists</li>
+            </ul>
+          </div>
+          <div class="stage-artifact-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            LATT_SOP_Sanitized.docx
+          </div>
+        </article>
+
+        <article class="stage-card">
+          <div>
+            <div class="stage-top-bar">
+              <span class="stage-step">STAGE 02</span>
+              <span class="stage-window">On-Site Execution</span>
+            </div>
+            <h3>Structured Field Capture &amp; Risk Scoring</h3>
+            <p>Eliminates free-form spreadsheet drift by guiding evaluators through one conditional form with built-in risk math.</p>
+            <ul class="stage-items">
+              <li>Adapts fields dynamically across 5 observation types</li>
+              <li>Two-axis 4×4 matrices compute High / Moderate / Low impact</li>
+              <li>Captures on-site training delivered &amp; HQ escalation flags</li>
+            </ul>
+          </div>
+          <div class="stage-artifact-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+            finding-form • impact-matrix
+          </div>
+        </article>
+
+        <article class="stage-card">
+          <div>
+            <div class="stage-top-bar">
+              <span class="stage-step privacy">STAGE 03</span>
+              <span class="stage-window">Privacy Guardrail</span>
+            </div>
+            <h3>Non-Attribution Sanitization Pipeline</h3>
+            <p>Protects psychological safety at assessed sites while giving senior leaders honest enterprise-wide trend visibility.</p>
+            <ul class="stage-items">
+              <li>Strips SharePoint HTML &amp; redacts units, sites, names, and emails</li>
+              <li>Groups visits into neutral keys (<code>ASMT-001</code>) for fair comparison</li>
+              <li>Standardizes policy citations &amp; tags 10 cross-cutting themes</li>
+            </ul>
+          </div>
+          <div class="stage-artifact-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Power Query Sanitization Rules
+          </div>
+        </article>
+
+        <article class="stage-card">
+          <div>
+            <div class="stage-top-bar">
+              <span class="stage-step sla">STAGE 04</span>
+              <span class="stage-window">Post-Visit to T+180d</span>
+            </div>
+            <h3>Executive BI, Leave-Behinds &amp; Action Timelines</h3>
+            <p>Turns structured field observations directly into site leave-behind packets, executive briefings, and tracked HQ actions.</p>
+            <ul class="stage-items">
+              <li>80/20 Root Cause Pareto &amp; auto-written executive BLUF summaries</li>
+              <li>Macro-free Excel site leave-behind generator with sorted charts</li>
+              <li>HQ Staff Action aging (Overdue, Stale &gt;30d) &amp; 180-day review</li>
+            </ul>
+          </div>
+          <div class="stage-artifact-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Power BI Model &amp; Action Queue
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Three Connected Program Modules -->
+  <section id="modules" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Program Architecture</span>
+        <h2>Three Connected Deliverables Built Within Enterprise Constraints</h2>
+        <p>
+          Every component was designed to run natively inside standard Microsoft 365 environments—requiring zero extra software procurement, zero macros blocked by security policy, and minimal administrative overhead.
+        </p>
+      </div>
+
+      <div class="modules-grid">
+        <!-- Module 1 -->
+        <article class="module-card">
+          <div>
+            <div class="module-meta">
+              <span class="module-id">MODULE 01</span>
+              <span class="status-pill">Complete &amp; Sanitized</span>
+            </div>
+            <h3>0-to-1 Program Governance &amp; Field Capture</h3>
+            <p class="module-desc">
+              Established the operational rules, role clarity, schedule discipline, and structured data intake required to run consistent multi-site assessments.
+            </p>
+            <ul class="module-points">
+              <li><strong>45-Page Standard Operating Procedure:</strong> Codified governance gates, team roles, communication protocols, and 6 functional inspection checklists.</li>
+              <li><strong>Dynamic Visit Milestone Calculator:</strong> Tracks 62 pre-visit through post-visit tasks automatically from Day-1 and Completion dates.</li>
+              <li><strong>Conditional SharePoint / Power Apps Intake:</strong> Adapts required fields across Findings, RIAs, Strengths, Best Practices, and Performer Nominations.</li>
+            </ul>
+          </div>
+          <div class="module-links">
+            <a href="docs/LATT_SOP_Sanitized.docx" class="action-link" download>
+              Download 45-Page Sanitized SOP (.docx) <span aria-hidden="true">→</span>
+            </a>
+            <a href="#gallery" class="action-link">
+              Browse 13 UI &amp; Governance Screenshots <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </article>
+
+        <!-- Module 2 -->
+        <article class="module-card">
+          <div>
+            <div class="module-meta">
+              <span class="module-id">MODULE 02</span>
+              <span class="status-pill">Complete &amp; Sanitized</span>
+            </div>
+            <h3>Enterprise Trend BI &amp; Closed-Loop Action Tracking</h3>
+            <p class="module-desc">
+              Replaced static slide decks with an automated, privacy-preserving analytics pipeline and headquarters corrective-action tracker.
+            </p>
+            <ul class="module-points">
+              <li><strong>Non-Attribution Firewall:</strong> Automated text redaction and neutral visit clustering so senior leaders see systemic trends without singling out sites.</li>
+              <li><strong>Executive Decision Support:</strong> 4×4 Operational Risk Matrix, 80/20 Root Cause Pareto, and slicer-reactive plain-English BLUF takeaways.</li>
+              <li><strong>180-Day HQ Target Timelines (SLAs):</strong> Automated aging indicators for Overdue, Due in 30 Days, Stale (&gt;30d), and Unassigned action items.</li>
+            </ul>
+          </div>
+          <div class="module-links">
+            <a href="#live-demos" class="action-link">
+              Launch Interactive Executive Dashboard <span aria-hidden="true">→</span>
+            </a>
+            <button type="button" class="action-link" onclick="switchDemo('anon'); document.getElementById('live-demos').scrollIntoView({behavior:'smooth'});">
+              Open Non-Attribution Action Tracker <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Module 3: Leave-Behind + Future Report Builder Slot -->
+        <article class="module-card future-slot">
+          <div>
+            <div class="module-meta">
+              <span class="module-id">MODULE 03</span>
+              <span class="status-pill staged">Excel ETL Live • Report Builder Next</span>
+            </div>
+            <h3>Automated Site Leave-Behinds &amp; Report Builder</h3>
+            <p class="module-desc">
+              Compresses post-visit reporting timelines so evaluators spend on-site hours coaching and training rather than formatting slides and tables.
+            </p>
+            <ul class="module-points">
+              <li><strong>Included Now — Macro-Free Site Leave-Behind:</strong> Self-contained Excel Power Query pipeline that filters to the visited site, strips internal PII nominations, and sorts out-brief risk charts.</li>
+              <li><strong>Included Now — HQ Leadership Workbook:</strong> Slicer-ready companion separating scalable Best Practices from HQ Staff Actions.</li>
+              <li><strong>Upcoming Portfolio Addition:</strong> Modular slot reserved for the sanitized <strong>Automated Out-Brief &amp; Formal Written Report Builder</strong>.</li>
+            </ul>
+          </div>
+          <div class="module-links">
+            <button type="button" class="action-link" onclick="selectLogicTab('leavebehind')">
+              View Leave-Behind Business Rules &amp; Logic <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Interactive Live Demos -->
+  <section id="live-demos" class="section section-tinted">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Interactive Prototypes</span>
+        <h2>Experience the Executive Dashboard &amp; Non-Attribution Workflow</h2>
+        <p>
+          Both interactive demos run directly in your browser on 100% synthetic assessment records (<code>ASMT-001</code>–<code>ASMT-005</code>)—requiring no Power BI license or login.
+        </p>
+      </div>
+
+      <div class="app-window">
+        <div class="app-topbar">
+          <div class="app-switcher" role="tablist" aria-label="Select Interactive Demo">
+            <button type="button" class="seg-btn active" id="tabBtnMockup" role="tab" aria-selected="true" onclick="switchDemo('mockup')">
+              Executive BI Dashboard Mockup
+            </button>
+            <button type="button" class="seg-btn" id="tabBtnAnon" role="tab" aria-selected="false" onclick="switchDemo('anon')">
+              Non-Attribution Trend Analyzer
+            </button>
+          </div>
+
+          <a id="demoOpenNewTab" href="analytics-powerbi/demo/executive-dashboard-mockup.html" target="_blank" rel="noopener" class="app-ext-btn">
+            Open Fullscreen
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+
+        <div class="app-guide-bar" id="demoCaptionBar">
+          <span><strong>Try it:</strong> Change any top slicer inside the dashboard below to see the Executive BLUF takeaways, 4×4 Risk Matrix, Pareto chart, and SLA queue update—or click Tab 4 to test live text redaction.</span>
+          <code>executive-dashboard-mockup.html</code>
+        </div>
+
+        <iframe
+          id="demoIframe"
+          class="demo-iframe"
+          src="analytics-powerbi/demo/executive-dashboard-mockup.html"
+          title="Interactive Enterprise Operational Assessment & Staff Action Analytics Demo"
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Filterable UI & Governance Screenshot Gallery -->
+  <section id="gallery" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Sanitized Visual Artifacts</span>
+        <h2>UI Forms, Risk Matrices &amp; Program Trackers (13 Artifacts)</h2>
+        <p>
+          Select any card to zoom in and step through the conditional SharePoint intake forms, two-axis impact scoring matrices, 62-task visit schedule tracker, and HQ Staff Action queue.
+        </p>
+      </div>
+
+      <div class="filter-row" role="group" aria-label="Filter visual artifacts by category">
+        <button type="button" class="filter-chip active" onclick="filterGallery('all', this)">All Artifacts (13)</button>
+        <button type="button" class="filter-chip" onclick="filterGallery('trackers', this)">Program &amp; SLA Trackers (4)</button>
+        <button type="button" class="filter-chip" onclick="filterGallery('forms', this)">Conditional Intake Forms (6)</button>
+        <button type="button" class="filter-chip" onclick="filterGallery('matrices', this)">Risk Matrices &amp; Checklists (3)</button>
+      </div>
+
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </section>
+
+  <!-- Section 5: PM Business Rules -> System Logic Viewer + Clean File Directory -->
+  <section id="system-logic" class="section section-tinted">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Requirements to Working Logic</span>
+        <h2>How Program Governance Rules Were Translated Into Automation</h2>
+        <p>
+          Rather than relying on manual analyst discipline, I defined deterministic business rules for privacy, risk scoring, citation cleanup, and SLA aging—then used AI-assisted Power Query and Power BI scripting to enforce those rules automatically.
+        </p>
+      </div>
+
+      <div class="logic-panel">
+        <div class="logic-tabs" role="tablist" aria-label="Program Governance Rules">
+          <button type="button" class="logic-tab-btn active" data-logic="privacy" onclick="selectLogicTab('privacy')">1. Non-Attribution Privacy Rule</button>
+          <button type="button" class="logic-tab-btn" data-logic="pareto" onclick="selectLogicTab('pareto')">2. Risk Matrix &amp; Executive BLUF Rule</button>
+          <button type="button" class="logic-tab-btn" data-logic="citations" onclick="selectLogicTab('citations')">3. Policy Citation Standardization</button>
+          <button type="button" class="logic-tab-btn" data-logic="schema" onclick="selectLogicTab('schema')">4. Multi-Theme Trend Modeling</button>
+          <button type="button" class="logic-tab-btn" data-logic="leavebehind" onclick="selectLogicTab('leavebehind')">5. Site Leave-Behind Filtering</button>
+        </div>
+
+        <div class="logic-body">
+          <div class="logic-pm-brief">
+            <div>
+              <h3 id="logicTitle">Non-Attribution Privacy Firewall</h3>
+              <div class="pm-rule-block">
+                <strong>Operational Problem</strong>
+                <p id="logicProblem"></p>
+              </div>
+              <div class="pm-rule-block">
+                <strong>PM Governance Rule Defined</strong>
+                <p id="logicRule"></p>
+              </div>
+              <div class="pm-rule-block">
+                <strong>Resulting Operational Impact</strong>
+                <p id="logicOutcome"></p>
+              </div>
+            </div>
+            <a id="logicFileLink" href="analytics-powerbi/sanitized-code/power-query/03_fnSanitize_Firewall.m" target="_blank" rel="noopener" class="action-link">
+              Open Sanitized Reference Script <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+
+          <div class="logic-code-box">
+            <div class="logic-code-hdr">
+              <code id="logicFileName">03_fnSanitize_Firewall.m</code>
+              <span style="font-size:0.73rem; color:#94a3b8;">AI-Assisted Implementation Artifact</span>
+            </div>
+            <pre class="logic-code-pre"><code id="logicCode"></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Clean 2-Card Featured Artifact Directory (Browser-Friendly, Zero Raw Markdown Links) -->
+      <div class="doc-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));" aria-label="Core Portfolio Downloads">
+        <a href="docs/LATT_SOP_Sanitized.docx" class="doc-card" download>
+          <div class="doc-card-top">
+            <span class="doc-ext">.DOCX • 45 PAGES</span>
+            <span class="doc-arrow" aria-hidden="true">↓</span>
+          </div>
+          <div>
+            <strong>Download Sanitized Program SOP</strong>
+            <span>Complete 0-to-1 charter, Leadership Triad RACI, milestone gates &amp; 6 functional checklists.</span>
+          </div>
+        </a>
+
+        <a href="analytics-powerbi/demo/executive-dashboard-mockup.html" target="_blank" rel="noopener" class="doc-card">
+          <div class="doc-card-top">
+            <span class="doc-ext">INTERACTIVE HTML</span>
+            <span class="doc-arrow" aria-hidden="true">↗</span>
+          </div>
+          <div>
+            <strong>Launch Fullscreen Executive Dashboard</strong>
+            <span>Zero-license interactive Power BI mockup with 4 tabs, 80/20 Pareto &amp; live redaction sandbox.</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Civilian PM Crosswalk & OPSEC Attestation -->
+  <section id="crosswalk" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Civilian Career Alignment</span>
+        <h2>Defense-to-Commercial Program Management Crosswalk</h2>
+        <p>
+          Every governance structure, workflow, and accountability mechanism built for LATT translates directly to civilian Program Management, Operations Excellence, and Business Systems roles.
+        </p>
+      </div>
+
+      <div class="crosswalk-layout">
+        <div class="table-wrap">
+          <table class="crosswalk">
+            <thead>
+              <tr>
+                <th>What I Built in LATT</th>
+                <th>Civilian Corporate PM Equivalent</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>45-Page Command SOP &amp; Leadership Triad</td>
+                <td>0-to-1 Program Charter, Cross-Functional RACI Matrix &amp; Multi-Site Operating Playbook</td>
+              </tr>
+              <tr>
+                <td>62-Task Day-1 Offset Visit Tracker</td>
+                <td>Critical-Path Launch &amp; Site-Readiness Schedule with Automated Milestone Offsets</td>
+              </tr>
+              <tr>
+                <td>Conditional 5-Type Observation Intake Tool</td>
+                <td>Standardized Field Audit / Quality Intake Workflow with Built-In Data Validation</td>
+              </tr>
+              <tr>
+                <td>4×4 Operational Impact Matrices</td>
+                <td>Enterprise Risk Scoring Framework (Probability × Severity) &amp; Best-Practice Valuation</td>
+              </tr>
+              <tr>
+                <td>Non-Attribution Trend Pipeline</td>
+                <td>Privacy-Preserving Executive Reporting &amp; Psychological-Safety Governance</td>
+              </tr>
+              <tr>
+                <td>HQ Staff Action Queue &amp; 180-Day Review</td>
+                <td>Closed-Loop Escalation Management, Target Timelines (SLAs) &amp; Executive Governance Reviews</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <aside class="attestation-card" aria-label="OPSEC and Data Sanitization Attestation">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--emerald);" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            OPSEC &amp; Clean-Room Verified
+          </h3>
+          <p>
+            All materials in this portfolio are 100% unclassified structural templates, sanitized workflow schemas, and deterministic synthetic demos.
+          </p>
+          <ul class="attest-list" style="margin-bottom:0;">
+            <li>Zero government URLs, internal endpoints, or <code>.mil</code> email addresses (replaced with <code>example.invalid</code>).</li>
+            <li>Zero real base/wing names, unit designations, or personnel identifiers.</li>
+            <li>Zero operational records or cached dataset rows—interactive tools generate synthetic data in-browser.</li>
+            <li>Document metadata, XML links, and UI screenshots audited for complete cleanliness.</li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox Modal -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lbTitle" onclick="if(event.target===this) closeLightbox()">
+    <div class="lightbox-box">
+      <div class="lightbox-hdr">
+        <h3 id="lbTitle">Artifact Preview</h3>
+        <div class="lb-actions">
+          <button type="button" class="lb-btn" onclick="stepLightbox(-1)" aria-label="Previous artifact">← Prev</button>
+          <button type="button" class="lb-btn" onclick="stepLightbox(1)" aria-label="Next artifact">Next →</button>
+          <button type="button" class="lb-btn" onclick="closeLightbox()" aria-label="Close modal">✕ Close</button>
+        </div>
+      </div>
+      <div class="lightbox-stage">
+        <img id="lbImg" src="" alt="" />
+      </div>
+      <div class="lightbox-ftr">
+        <span id="lbDesc"></span>
+        <code id="lbFile"></code>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-row">
+      <div>
+        <strong style="color:#f8fafc;">Logistics Assessment &amp; Training Team (LATT) — Program Management Portfolio</strong>
+        <div style="margin-top:4px;">0-to-1 Governance • Operational Excellence • Low-Code &amp; AI-Enabled Systems • 100% Sanitized / Synthetic Data</div>
+      </div>
+      <div class="footer-nav">
+        <a href="#top">Back to Top</a>
+        <a href="#lifecycle">Lifecycle</a>
+        <a href="#live-demos">Live Demos</a>
+        <a href="#gallery">Artifacts</a>
+        <a href="docs/LATT_SOP_Sanitized.docx" download>Sanitized SOP</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // =========================================================================
+    // SINGLE-PLACE METRICS CONFIGURATION (Populate Unclassified Totals Pre-2028)
+    // =========================================================================
+    const PORTFOLIO_METRICS = [
+      {
+        label: "Program Scale",
+        slot: "Update Pre-2028",
+        value: "[XX]+ Site Visits",
+        desc: "[XX]+ cross-functional evaluators aligned under one 45-page SOP and 6 standardized functional checklists."
+      },
+      {
+        label: "Reporting Efficiency",
+        slot: "Update Pre-2028",
+        value: "[XX] hrs → [Y] hrs",
+        desc: "Cut post-visit out-brief and leave-behind preparation time by replacing manual copy-paste with structured exports."
+      },
+      {
+        label: "Lifecycle Span",
+        slot: "Governance Standard",
+        value: "T-90d to T+180d",
+        desc: "End-to-end milestone management from 90-day pre-visit readiness through 180-day post-visit corrective-action review."
+      },
+      {
+        label: "Closed-Loop Accountability",
+        slot: "Update Pre-2028",
+        value: "[XX]% On-Time Closure",
+        desc: "[XX]+ systemic headquarters actions routed with automated target-timeline (SLA) aging and 30-day update hygiene."
+      }
+    ];
+
+    function renderMetrics() {
+      document.getElementById("kpiStrip").innerHTML = PORTFOLIO_METRICS.map(m => `
+        <div class="kpi-card">
+          <div class="kpi-top">
+            <span class="kpi-label">${m.label}</span>
+            <span class="kpi-slot-pill">${m.slot}</span>
+          </div>
+          <div class="kpi-value">${m.value}</div>
+          <p class="kpi-desc">${m.desc}</p>
+        </div>
+      `).join("");
+    }
+
+    // =========================================================================
+    // INTERACTIVE DEMO SWITCHER
+    // =========================================================================
+    const DEMOS = {
+      mockup: {
+        src: "analytics-powerbi/demo/executive-dashboard-mockup.html",
+        file: "executive-dashboard-mockup.html",
+        tip: "<strong>Try it:</strong> Change any top slicer inside the dashboard below to see the Executive BLUF takeaways, 4×4 Risk Matrix, Pareto chart, and SLA queue update—or click Tab 4 to test live text redaction."
+      },
+      anon: {
+        src: "analytics-powerbi/sanitized-code/html-prototype/enterprise-anon-tracker.html",
+        file: "enterprise-anon-tracker.html",
+        tip: "<strong>Try it:</strong> Preloaded with 30 synthetic multi-site records—filter by Functional Area, inspect the Pareto root causes, or type in the HQ Staff Action Tracker and export a response worksheet CSV."
+      }
+    };
+
+    function switchDemo(key) {
+      const d = DEMOS[key];
+      document.getElementById("demoIframe").src = d.src;
+      document.getElementById("demoOpenNewTab").href = d.src;
+      document.getElementById("demoCaptionBar").innerHTML = `<span>${d.tip}</span><code>${d.file}</code>`;
+      document.getElementById("tabBtnMockup").classList.toggle("active", key === "mockup");
+      document.getElementById("tabBtnAnon").classList.toggle("active", key === "anon");
+      document.getElementById("tabBtnMockup").setAttribute("aria-selected", key === "mockup");
+      document.getElementById("tabBtnAnon").setAttribute("aria-selected", key === "anon");
+    }
+
+    // =========================================================================
+    // 13-ARTIFACT SCREENSHOT GALLERY + LIGHTBOX
+    // =========================================================================
+    const GALLERY_ITEMS = [
+      {
+        file: "assets/visit-milestone-tracker.png",
+        cat: "trackers",
+        catLabel: "Program & SLA Trackers",
+        title: "Dynamic 62-Task Visit Milestone Tracker",
+        desc: "Schedule calculator driven off Day-1 and Completion dates—tracking 62 pre-visit, execution, and post-visit tasks across owners."
+      },
+      {
+        file: "assets/staff-action-tracker.png",
+        cat: "trackers",
+        catLabel: "Program & SLA Trackers",
+        title: "Closed-Loop HQ Staff Action Queue",
+        desc: "Headquarters tracking list receiving escalated field items with division ownership, target close dates, and 180-day follow-up gates."
+      },
+      {
+        file: "assets/sharepoint-list.png",
+        cat: "trackers",
+        catLabel: "Program & SLA Trackers",
+        title: "Master Observations Repository",
+        desc: "Structured multi-site SharePoint list with custom site views, status pills, and standardized metadata feeding automated reporting."
+      },
+      {
+        file: "assets/teams-open-sp.png",
+        cat: "trackers",
+        catLabel: "Program & SLA Trackers",
+        title: "Collaboration Channel List Integration",
+        desc: "Embeds the observation repository directly inside site assessment Teams channels so evaluators work from one hub."
+      },
+      {
+        file: "assets/select-type.png",
+        cat: "forms",
+        catLabel: "Conditional Intake Forms",
+        title: "Dynamic Observation Type Selector",
+        desc: "Single entry point that adapts required form fields across Finding, Best Practice, Superior Performer, and Improvement Area."
+      },
+      {
+        file: "assets/finding-form.png",
+        cat: "forms",
+        catLabel: "Conditional Intake Forms",
+        title: "Observation Input Tool — Policy Finding View",
+        desc: "Enforces root-cause category, Probability × Severity inputs, governing directive citation, and on-site training delivered."
+      },
+      {
+        file: "assets/strength-category.png",
+        cat: "forms",
+        catLabel: "Conditional Intake Forms",
+        title: "Standardized Root-Cause Taxonomy",
+        desc: "Structured dropdown taxonomy (Process Not Defined, Supervision Gap, Training Gap, Documentation) enabling 80/20 Pareto analysis."
+      },
+      {
+        file: "assets/ria-form.png",
+        cat: "forms",
+        catLabel: "Conditional Intake Forms",
+        title: "Recommended Improvement Area (RIA) View",
+        desc: "Non-punitive advisory schema omitting mandatory compliance violation flags while preserving operational risk scoring."
+      },
+      {
+        file: "assets/best-practice-form.png",
+        cat: "forms",
+        catLabel: "Conditional Intake Forms",
+        title: "Enterprise Best Practice Capture View",
+        desc: "Captures high-value local innovations with an HQ Staff Action option to scale proven practices across sites."
+      },
+      {
+        file: "assets/superior-performer-form.png",
+        cat: "forms",
+        catLabel: "Conditional Intake Forms",
+        title: "Superior Performer Recognition View",
+        desc: "Captures individual recognition on-site while downstream pipelines automatically strip nominee PII from external reports."
+      },
+      {
+        file: "assets/impact-matrix-deficiency.png",
+        cat: "matrices",
+        catLabel: "Risk Matrices & Checklists",
+        title: "4×4 Deficiency Operational Impact Matrix",
+        desc: "Two-axis risk rubric (Probability × Severity → High / Moderate / Low) applied consistently across intake, Excel, and Power BI."
+      },
+      {
+        file: "assets/impact-matrix-strength.png",
+        cat: "matrices",
+        catLabel: "Risk Matrices & Checklists",
+        title: "4×4 Strength & Benchmark Valuation Matrix",
+        desc: "Parallel positive-impact rubric (Sustainability × Value) prioritizing repeatable benchmarks for enterprise adoption."
+      },
+      {
+        file: "assets/general-checklist.png",
+        cat: "matrices",
+        catLabel: "Risk Matrices & Checklists",
+        title: "Standardized Functional Evaluation Checklist",
+        desc: "Excerpt from the 6 functional checklists tying on-site evaluation criteria directly to governing policy chapters."
+      }
+    ];
+
+    let visibleGallery = [...GALLERY_ITEMS];
+    let currentLbIndex = 0;
+
+    function renderGallery() {
+      document.getElementById("galleryGrid").innerHTML = visibleGallery.map((item, idx) => `
+        <article class="shot-card" tabindex="0" role="button" aria-label="Inspect ${item.title}" onclick="openLightbox(${idx})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLightbox(${idx});}">
+          <div class="shot-preview">
+            <img src="${item.file}" alt="${item.title}" loading="lazy" />
+            <span class="shot-badge">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              Zoom
+            </span>
+          </div>
+          <div class="shot-info">
+            <span class="shot-tag">${item.catLabel}</span>
+            <h3>${item.title}</h3>
+            <p>${item.desc}</p>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function filterGallery(cat, btn) {
+      document.querySelectorAll(".filter-chip").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      visibleGallery = cat === "all" ? [...GALLERY_ITEMS] : GALLERY_ITEMS.filter(i => i.cat === cat);
+      renderGallery();
+    }
+
+    function openLightbox(idx) {
+      currentLbIndex = idx;
+      updateLightbox();
+      document.getElementById("lightbox").classList.add("open");
+    }
+
+    function closeLightbox() {
+      document.getElementById("lightbox").classList.remove("open");
+    }
+
+    function stepLightbox(delta) {
+      currentLbIndex = (currentLbIndex + delta + visibleGallery.length) % visibleGallery.length;
+      updateLightbox();
+    }
+
+    function updateLightbox() {
+      const item = visibleGallery[currentLbIndex];
+      document.getElementById("lbTitle").textContent = `${currentLbIndex + 1} / ${visibleGallery.length} — ${item.title}`;
+      const img = document.getElementById("lbImg");
+      img.src = item.file;
+      img.alt = item.title;
+      document.getElementById("lbDesc").textContent = item.desc;
+      document.getElementById("lbFile").textContent = item.file;
+    }
+
+    document.addEventListener("keydown", e => {
+      const lb = document.getElementById("lightbox");
+      if (!lb.classList.contains("open")) return;
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowLeft") stepLightbox(-1);
+      if (e.key === "ArrowRight") stepLightbox(1);
+    });
+
+    // =========================================================================
+    // PM BUSINESS RULES -> SYSTEM LOGIC VIEWER
+    // =========================================================================
+    const LOGIC_ITEMS = {
+      privacy: {
+        title: "1. Non-Attribution Privacy Firewall",
+        problem: "Senior leaders needed cross-site systemic trend visibility, while assessed units needed assurance that candid coaching observations would not be used as a public 'naming and shaming' scorecard.",
+        rule: "Drop source base columns before loading executive trend models, group visits >30 days apart into neutral assessment IDs (ASMT-001..N), and automatically scrub numbered units, site names, ranks/names, and emails from narrative text.",
+        outcome: "Protected psychological safety during field assessments while delivering 100% transparent, normalized per-visit trend metrics to headquarters leadership.",
+        file: "03_fnSanitize_Firewall.m",
+        href: "analytics-powerbi/sanitized-code/power-query/03_fnSanitize_Firewall.m",
+        code: `// Automated pre-load privacy rule enforced in Power Query
+// Replaces unit names, bases, personnel names, and emails with neutral tokens
+if Text.Contains(c[Core], "@") then
+    [Next = i + 1, Out = c[Lead] & "[EMAIL]" & c[Trail]]
+else if List.Contains(Ranks, c[Core]) and nx <> null and IsName(nx[Core]) then
+    let two = nx[Trail] = "" and nx2 <> null and IsName(nx2[Core]),
+        last = if two then nx2 else nx
+    in [Next = i + (if two then 3 else 2), Out = c[Lead] & "[PERSONNEL]" & last[Trail]]
+else if IsNum(c[Core]) and c[Trail] = "" and nx <> null and IsAbbrev(nx[Core]) then
+    [Next = i + 2, Out = c[Lead] & "[UNIT]" & SlashRest(nx[Core]) & nx[Trail]]
+else if chain > i then
+    [Next = chain + 1, Out = c[Lead] & "[UNIT]" & C{chain}[Trail]]
+else if IsBase(c[Core]) then
+    [Next = i + 1, Out = c[Lead] & "[INSTALLATION]" & c[Trail]]`
+      },
+      pareto: {
+        title: "2. 4×4 Risk Matrix, 80/20 Pareto & Auto-BLUF Summaries",
+        problem: "Executives don't have time to interpret raw observation counts, and larger visits naturally generate higher raw numbers than smaller visits.",
+        rule: "Standardize risk into a 4×4 Probability × Severity matrix, normalize trends 'per assessment', highlight the vital-few root causes driving 80% of issues, and auto-generate plain-English Bottom-Line-Up-Front (BLUF) sentences.",
+        outcome: "Leaders can filter by any fiscal year or functional area and immediately read where deficiencies concentrate, which root causes dominate, and how SLA closure is tracking.",
+        file: "01_Enterprise_Measures.dax",
+        href: "analytics-powerbi/sanitized-code/dax-and-theme/01_Enterprise_Measures.dax",
+        code: `// Slicer-reactive plain-English executive takeaway rules (DAX)
+MEASURE Observations[BLUF 1 Concentration] =
+    "Deficiencies are most concentrated in " & [Top 2 Functions]
+        & ", led at the workcenter level by " & [Top 2 Sections] & "."
+
+MEASURE Observations[BLUF 2 Root Cause] =
+    "Leading root causes: " & [Top 2 Root Causes] & ", together "
+        & FORMAT ( [Top 2 Root Causes Share], "0%" ) & " of classified deficiencies."
+
+// Reconciliation check ensuring every HQ-flagged field item enters the tracker
+MEASURE StaffActions[Not Yet in Tracker] =
+    MAX ( 0, CALCULATE ( [Staff Action Items], REMOVEFILTERS () )
+           - CALCULATE ( COUNTROWS ( StaffActions ), REMOVEFILTERS () ) )`
+      },
+      citations: {
+        title: "3. Governing Directive & Tech Order Standardization",
+        problem: "Field evaluators type policy references inconsistently under time pressure ('AFI21-101', 'DAFI-21-101', or bare '21-101'), fragmenting compliance trend rollups.",
+        rule: "Map legacy directive prefixes to current equivalents (AFI → DAFI, AFMAN → DAFMAN), separate technical orders from policy manuals, and resolve bare series numbers using the dataset's primary prefix.",
+        outcome: "Cleanly identifies which specific enterprise directives and chapters drive recurring field compliance gaps without manual spreadsheet cleanup.",
+        file: "04_fnPublications.m",
+        href: "analytics-powerbi/sanitized-code/power-query/04_fnPublications.m",
+        code: `// Standardizes free-text directive & technical order citations
+Prefixes = {"DAFMAN","DAFPD","DAFI","AFMAN","AFPD","AFTTP","AFI","DODI","DODM","DOD","TO","DAF"},
+Norm = [DAFMAN = "DAFMAN", AFMAN = "DAFMAN", DAFI = "DAFI", AFI = "DAFI",
+        DAFPD = "DAFPD", AFPD = "DAFPD", AFTTP = "AFTTP",
+        DODI = "DoDI", DOD = "DoDI", DODM = "DoDM", TO = "TO", DAF = "DAFI"],
+
+// Separates glued citations ("AFI21-101" -> "DAFI 21-101") and extracts canonical series
+else if hasPrefix then
+    let p = Record.Field(Norm, prev)
+    in [Prefix = p, Series = if p = "TO" then t else Text.Combine(List.FirstN(segs, 2), "-")]`
+      },
+      schema: {
+        title: "4. Multi-Theme Trend Modeling Without Double-Counting",
+        problem: "A single field observation often spans multiple operational themes (e.g., Tool Control AND Training) and cites multiple directives—which causes naive flat tables to double-count observations.",
+        rule: "Keep one clean row per observation in the central table, and link separate multi-label bridge tables for 10 Operational Themes and Policy Citations alongside a shared Fiscal Calendar.",
+        outcome: "Maintains 100% accurate observation and SLA counts while letting stakeholders filter seamlessly by any operational theme or directive.",
+        file: "relationships.tmdl",
+        href: "analytics-powerbi/sanitized-code/semantic-model/relationships.tmdl",
+        code: `// Star-and-bridge model relationships (.tmdl)
+relationship Bridge_ObservationThemes_Observations
+    crossFilteringBehavior: bothDirections
+    fromColumn: ObservationThemes.ItemID
+    toColumn: Observations.ItemID
+
+relationship Bridge_ObservationReferences_Observations
+    crossFilteringBehavior: bothDirections
+    fromColumn: ObservationReferences.ItemID
+    toColumn: Observations.ItemID
+
+relationship Fact_Observations_FiscalDate
+    fromColumn: Observations.'Date Found'
+    toColumn: Date.Date
+
+relationship Fact_StaffActions_FiscalDate
+    fromColumn: StaffActions.'Date Found'
+    toColumn: Date.Date`
+      },
+      leavebehind: {
+        title: "5. Macro-Free Site Leave-Behind Packet Rules",
+        problem: "Security policies block Excel VBA macros on government networks, yet teams needed an instant, clean leave-behind workbook for the host unit at visit completion.",
+        rule: "Drive the Excel template from a simple worksheet parameter cell ('tblVisitFilter'), automatically exclude internal Superior Performer PII nominations, and apply the exact same 4×4 risk rules as Power BI.",
+        outcome: "Team Leads refresh one macro-free workbook at cutoff to hand the host site a clean, sorted corrective-action and benchmark packet.",
+        file: "01_WingVisit_Base.m",
+        href: "analytics-powerbi/sanitized-code/power-query/excel-automation/01_WingVisit_Base.m",
+        code: `// Reads target site & visit dates from worksheet cell table 'tblVisitFilter'
+ParamTbl   = Excel.CurrentWorkbook(){[Name = "tblVisitFilter"]}[Content],
+ParamRec   = Record.FromList(ParamTbl[Value], ParamTbl[Parameter]),
+TargetBase = Text.Upper(Text.Trim(Text.From(Record.FieldOrDefault(ParamRec, "Base", "")))),
+
+// Filters to visited unit & strips internal Superior Performer PII nominations
+FilteredVisit = Table.SelectRows(FixSection, each
+    (TargetBase = "" or Text.Upper(Text.Trim([Base])) = TargetBase)
+    and (StartDate = null or ([Date Found] <> null and [Date Found] >= StartDate))
+    and (EndDate = null or ([Date Found] <> null and [Date Found] <= EndDate))),
+NoSupPerf = Table.SelectRows(FilteredVisit,
+    each Text.Upper(Text.Trim([Observation Type])) <> "SUPERIOR PERFORMER")`
+      }
+    };
+
+    function selectLogicTab(key) {
+      const item = LOGIC_ITEMS[key];
+      document.getElementById("logicTitle").textContent = item.title;
+      document.getElementById("logicProblem").textContent = item.problem;
+      document.getElementById("logicRule").textContent = item.rule;
+      document.getElementById("logicOutcome").textContent = item.outcome;
+      document.getElementById("logicFileName").textContent = item.file;
+      document.getElementById("logicFileLink").href = item.href;
+      document.getElementById("logicCode").textContent = item.code;
+
+      document.querySelectorAll(".logic-tab-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.logic === key);
+      });
+
+      const sec = document.getElementById("system-logic");
+      const rect = sec.getBoundingClientRect();
+      if (rect.top < -250 || rect.top > window.innerHeight * 0.7) {
+        sec.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    // =========================================================================
+    // THEME & MOBILE DRAWER CONTROLS
+    // =========================================================================
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      document.getElementById("iconMoon").style.display = theme === "light" ? "block" : "none";
+      document.getElementById("iconSun").style.display = theme === "dark" ? "block" : "none";
+      try { localStorage.setItem("latt_portfolio_theme", theme); } catch (e) {}
+    }
+
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      const cur = document.documentElement.getAttribute("data-theme") || "light";
+      applyTheme(cur === "light" ? "dark" : "light");
+    });
+
+    const mobileBtn = document.getElementById("mobileMenuBtn");
+    const mobileDrawer = document.getElementById("mobileDrawer");
+    mobileBtn.addEventListener("click", () => {
+      const open = mobileDrawer.classList.toggle("open");
+      mobileBtn.setAttribute("aria-expanded", open);
+    });
+    function closeMobileMenu() {
+      mobileDrawer.classList.remove("open");
+      mobileBtn.setAttribute("aria-expanded", "false");
+    }
+
+    // Initialize Page
+    (function init() {
+      try {
+        const saved = localStorage.getItem("latt_portfolio_theme");
+        if (saved === "dark" || saved === "light") applyTheme(saved);
+      } catch (e) {}
+      renderMetrics();
+      renderGallery();
+      selectLogicTab("privacy");
+    })();
+  </script>
+</body>
+</html>

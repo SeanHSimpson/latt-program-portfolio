@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Enterprise Operational Assessment &amp; Staff Action Analytics — Interactive Portfolio Mockup</title>
+<style>
+  :root {
+    --navy: #0c2d83;
+    --dark-navy: #0f2942;
+    --royal: #1d4ed8;
+    --sky: #eff6ff;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --border: #cbd5e1;
+    --text: #0f172a;
+    --muted: #475569;
+    --red: #dc2626;
+    --red-bg: #fecaca;
+    --red-soft: #fef2f2;
+    --red-txt: #991b1b;
+    --amber: #f59e0b;
+    --amber-bg: #fef08a;
+    --amber-txt: #854d0e;
+    --green: #16a34a;
+    --green-bg: #dcfce7;
+    --green-txt: #166534;
+    --peach-bg: #fed7aa;
+    --peach-txt: #9a3412;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .topbar {
+    background: linear-gradient(135deg, var(--navy), var(--dark-navy));
+    color: #fff;
+    padding: 16px 24px 12px;
+    border-bottom: 4px solid var(--royal);
+  }
+  .topbar-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    max-width: 1380px;
+    margin: 0 auto;
+  }
+  .brand h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.2px; }
+  .brand p { font-size: 0.82rem; color: #cbd5e1; margin-top: 2px; }
+  .demo-pill {
+    background: rgba(255,255,255,0.14);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #e0f2fe;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .nav-bar {
+    background: var(--dark-navy);
+    border-bottom: 1px solid #1e3a5f;
+  }
+  .nav-inner {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    padding: 11px 18px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s ease;
+  }
+  .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.06); }
+  .tab-btn.active { color: #fff; border-bottom-color: #60a5fa; background: rgba(255,255,255,0.09); }
+
+  .container { max-width: 1380px; margin: 0 auto; padding: 18px 24px 36px; }
+
+  /* Global Slicer Bar */
+  .slicer-bar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: flex-end;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+  }
+  .slicer-group { display: flex; flex-direction: column; gap: 4px; min-width: 175px; }
+  .slicer-group label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; }
+  .slicer-group select {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    background: #f8fafc;
+    color: var(--text);
+    font-weight: 500;
+  }
+  .btn-reset {
+    background: var(--sky);
+    color: var(--navy);
+    border: 1px solid #bfdbfe;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-left: auto;
+  }
+  .btn-reset:hover { background: #dbeafe; }
+
+  /* BLUF Banner */
+  .bluf-box {
+    background: linear-gradient(90deg, #eff6ff, #f8fafc);
+    border: 1px solid #bfdbfe;
+    border-left: 5px solid var(--navy);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px 18px;
+  }
+  .bluf-item { font-size: 0.83rem; color: var(--dark-navy); }
+  .bluf-item strong { color: var(--navy); display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+
+  /* KPI Grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-top: 4px solid var(--navy);
+    border-radius: 9px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+  }
+  .kpi-card.red { border-top-color: var(--red); background: linear-gradient(180deg, #fff, var(--red-soft)); }
+  .kpi-card.amber { border-top-color: var(--amber); }
+  .kpi-card.green { border-top-color: var(--green); }
+  .kpi-card.royal { border-top-color: var(--royal); }
+  .kpi-lbl { font-size: 0.74rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .kpi-val { font-size: 1.75rem; font-weight: 800; color: var(--navy); margin-top: 4px; }
+  .kpi-card.red .kpi-val { color: var(--red-txt); }
+  .kpi-card.amber .kpi-val { color: var(--amber-txt); }
+  .kpi-card.green .kpi-val { color: var(--green-txt); }
+  .kpi-sub { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  /* Cards & Grids */
+  .grid-2 { display: grid; grid-template-columns: 1.35fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-2-eq { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 960px) { .grid-2, .grid-2-eq { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: 0 1px 3px rgba(15,23,42,0.05);
+  }
+  .card h2 {
+    font-size: 0.96rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .card .subtitle { font-size: 0.78rem; color: var(--muted); margin-bottom: 12px; }
+
+  /* 4x4 Risk Matrix Table */
+  table.matrix { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  table.matrix th, table.matrix td {
+    border: 1px solid var(--border);
+    padding: 10px 8px;
+    text-align: center;
+  }
+  table.matrix th { background: var(--dark-navy); color: #fff; font-weight: 700; font-size: 0.78rem; }
+  table.matrix td.row-hdr { background: var(--sky); color: var(--dark-navy); font-weight: 700; text-align: left; padding-left: 12px; }
+  .m-high { background: var(--red-bg); color: var(--red-txt); font-weight: 800; font-size: 1rem; }
+  .m-mod  { background: var(--amber-bg); color: var(--amber-txt); font-weight: 700; font-size: 0.95rem; }
+  .m-low  { background: var(--green-bg); color: var(--green-txt); font-weight: 700; font-size: 0.95rem; }
+  .m-tot  { background: var(--sky); color: var(--navy); font-weight: 800; }
+
+  /* Data Tables */
+  table.data { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  table.data th {
+    background: var(--dark-navy);
+    color: #fff;
+    text-align: left;
+    padding: 9px 10px;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  table.data td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; vertical-align: top; }
+  table.data tr:nth-child(even) { background: #f8fafc; }
+  .pill {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .p-red { background: var(--red-bg); color: var(--red-txt); }
+  .p-amber { background: var(--amber-bg); color: var(--amber-txt); }
+  .p-peach { background: var(--peach-bg); color: var(--peach-txt); }
+  .p-green { background: var(--green-bg); color: var(--green-txt); }
+  .p-grey { background: #e2e8f0; color: #334155; }
+  .p-blue { background: #dbeafe; color: var(--navy); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Interactive Redaction Sandbox */
+  .sandbox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 10px; }
+  @media (max-width: 820px) { .sandbox-grid { grid-template-columns: 1fr; } }
+  textarea.sandbox {
+    width: 100%; min-height: 115px; padding: 10px; border: 1px solid var(--border);
+    border-radius: 8px; font-family: Consolas, monospace; font-size: 0.83rem; resize: vertical;
+  }
+  .sandbox-out {
+    background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 8px;
+    font-family: Consolas, monospace; font-size: 0.83rem; min-height: 115px; white-space: pre-wrap;
+  }
+  .tok { background: #1d4ed8; color: #fff; padding: 1px 5px; border-radius: 4px; font-weight: 700; }
+
+  .legend-row { display: flex; gap: 16px; align-items: center; font-size: 0.78rem; color: var(--muted); margin-top: 8px; flex-wrap: wrap; }
+  .legend-swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-right: 5px; vertical-align: -2px; }
+  footer {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--muted);
+    padding: 18px;
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row">
+    <div class="brand">
+      <h1>Enterprise Operational Assessment &amp; Staff Action Analytics</h1>
+      <p>Power BI Semantic Model &amp; Executive Dashboard Showcase • Star-Schema Architecture • Non-Attribution Firewall</p>
+    </div>
+    <div class="demo-pill">SYNTHETIC PORTFOLIO DEMO DATA • ZERO OPERATIONAL RECORDS</div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <div class="nav-inner">
+    <button class="tab-btn active" onclick="switchTab('overview', this)">1. Executive Overview</button>
+    <button class="tab-btn" onclick="switchTab('risk', this)">2. Risk Matrix &amp; Root Cause Pareto</button>
+    <button class="tab-btn" onclick="switchTab('actions', this)">3. Staff Action SLA Tracker</button>
+    <button class="tab-btn" onclick="switchTab('arch', this)">4. Star Schema &amp; Redaction Sandbox</button>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Global Synced Slicers -->
+  <div class="slicer-bar" id="globalSlicers">
+    <div class="slicer-group">
+      <label for="fAsmt">Neutral Assessment</label>
+      <select id="fAsmt" onchange="renderAll()">
+        <option value="ALL">All Assessments (ASMT-001 – ASMT-005)</option>
+      </select>
+    </div>
+    <div class="slicer-group">
+      <label for="fFunc">Focus Area</label>
+      <select id="fFunc" onchange="renderAll()">
+        <option value="ALL">All 6 Focus Areas</option>
+      </select>
+    </div>
+    <div class="slicer-group">
+      <label for="fRisk">Operational Risk Level</label>
+      <select id="fRisk" onchange="renderAll()">
+        <option value="ALL">All Risk Levels</option>
+        <option value="High">High Risk</option>
+        <option value="Moderate">Moderate Risk</option>
+        <option value="Low">Low Risk</option>
+      </select>
+    </div>
+    <div class="slicer-group">
+      <label for="fCat">Category</label>
+      <select id="fCat" onchange="renderAll()">
+        <option value="ALL">All Observations</option>
+        <option value="Finding">Findings (Policy Linked)</option>
+        <option value="Improvement Area">Recommended Improvement Areas</option>
+        <option value="Strength / Benchmark">Strengths &amp; Best Practices</option>
+      </select>
+    </div>
+    <button class="btn-reset" onclick="resetFilters()">Reset All Slicers</button>
+  </div>
+
+  <!-- TAB 1: EXECUTIVE OVERVIEW -->
+  <div id="tab-overview" class="tab-panel active">
+    <div class="bluf-box" id="blufBox"></div>
+    <div class="kpi-grid" id="overviewKpis"></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Deficiencies by Focus Area &amp; Risk Level (Auto-Sorted)</h2>
+        <div class="subtitle">Stacked horizontal breakdown mirroring Power BI &amp; automated Excel Leave-Behind visuals</div>
+        <div id="svgFocusBars"></div>
+        <div class="legend-row">
+          <span><i class="legend-swatch" style="background:#dc2626"></i>High Risk</span>
+          <span><i class="legend-swatch" style="background:#f59e0b"></i>Moderate Risk</span>
+          <span><i class="legend-swatch" style="background:#16a34a"></i>Low Risk</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Operational Risk Share (Donut)</h2>
+        <div class="subtitle">Proportional split across assessed deficiencies in current slicer context</div>
+        <div id="svgDonut"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Normalized Assessment Volume (ASMT-001 through ASMT-005)</h2>
+      <div class="subtitle">Neutral chronological visit keys generated by 30-day gap clustering (source installation dropped pre-load)</div>
+      <div id="svgAsmtTrend"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: RISK MATRIX & ROOT CAUSE PARETO -->
+  <div id="tab-risk" class="tab-panel">
+    <div class="grid-2-eq">
+      <div class="card">
+        <h2>4×4 Operational Impact Risk Matrix (Probability × Severity)</h2>
+        <div class="subtitle">Top-3 critical cells: Severe/Frequent, Significant/Frequent, and Severe/Likely</div>
+        <div id="riskMatrixWrap"></div>
+      </div>
+      <div class="card">
+        <h2>Root Cause 80/20 Pareto Analysis</h2>
+        <div class="subtitle">Blue bars = "Vital Few" driving the first 80% of classified deficiencies; orange line = cumulative %</div>
+        <div id="svgPareto"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Top Multi-Label Operational Themes (10-Theme Keyword Engine)</h2>
+      <div class="subtitle">Derived via <code>ObservationThemes</code> bridge table (bi-directional filtering, multi-label per observation)</div>
+      <div id="svgThemes"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: STAFF ACTION SLA TRACKER -->
+  <div id="tab-actions" class="tab-panel">
+    <div class="kpi-grid" id="saKpis"></div>
+    <div class="card">
+      <h2>Closed-Loop Headquarters Staff Action Queue (180-Day Follow-Up Governance)</h2>
+      <div class="subtitle">Automated SLA aging from <code>StaffActions</code> table: Overdue, Due in 30 Days, Stale (&gt;30d without update), and Awaiting First Update</div>
+      <div style="overflow-x:auto;">
+        <table class="data" id="saTable">
+          <thead>
+            <tr>
+              <th>SA ID</th>
+              <th>Focus Area</th>
+              <th>Office Symbol</th>
+              <th>Days Open</th>
+              <th>Due Status</th>
+              <th>Update Status</th>
+              <th>Sanitized Action Summary</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: ARCHITECTURE & REDACTION SANDBOX -->
+  <div id="tab-arch" class="tab-panel">
+    <div class="card" style="margin-bottom:16px;">
+      <h2>Star-Schema Data Model &amp; Non-Attribution Pipeline</h2>
+      <div class="subtitle">Exact Power BI semantic structure from <code>sanitized-code/semantic-model/*.tmdl</code></div>
+      <svg viewBox="0 0 1120 310" width="100%" style="max-height:310px; display:block;">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1d4ed8"/>
+          </marker>
+        </defs>
+        <!-- SharePoint Box -->
+        <rect x="16" y="25" width="210" height="105" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+        <text x="121" y="50" text-anchor="middle" font-weight="700" font-size="13" fill="#0c2d83">SharePoint Source Lists</text>
+        <text x="121" y="72" text-anchor="middle" font-size="11" fill="#334155">• Observations Master List</text>
+        <text x="121" y="90" text-anchor="middle" font-size="11" fill="#334155">• HQ Staff Action Items</text>
+        <text x="121" y="112" text-anchor="middle" font-size="10" fill="#64748b">example.invalid/sharepoint-site</text>
+
+        <!-- Firewall Box -->
+        <rect x="265" y="25" width="225" height="105" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+        <text x="377" y="48" text-anchor="middle" font-weight="700" font-size="13" fill="#991b1b">Power Query M Firewall</text>
+        <text x="377" y="69" text-anchor="middle" font-size="11" fill="#334155">• Strict Column Allow-List</text>
+        <text x="377" y="87" text-anchor="middle" font-size="11" fill="#334155">• fnCleanText + fnSanitize</text>
+        <text x="377" y="105" text-anchor="middle" font-size="11" fill="#334155">• 30-Day Visit Keys (ASMT-XXX)</text>
+        <line x1="226" y1="77" x2="262" y2="77" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Observations Fact -->
+        <rect x="530" y="16" width="230" height="122" rx="8" fill="#0c2d83" stroke="#0f2942" stroke-width="2"/>
+        <text x="645" y="40" text-anchor="middle" font-weight="700" font-size="13" fill="#ffffff">FACT: Observations</text>
+        <text x="645" y="61" text-anchor="middle" font-size="11" fill="#dbeafe">ItemID (PK) • Neutral ID • Assessment</text>
+        <text x="645" y="79" text-anchor="middle" font-size="11" fill="#dbeafe">Function • Section • Finding Type</text>
+        <text x="645" y="97" text-anchor="middle" font-size="11" fill="#dbeafe">Prob × Sev → Risk Level • DQ Flags</text>
+        <text x="645" y="116" text-anchor="middle" font-size="10" fill="#93c5fd">30+ DAX Measures &amp; Dynamic BLUFs</text>
+        <line x1="490" y1="77" x2="527" y2="77" stroke="#1d4ed8" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Bridge: Themes -->
+        <rect x="830" y="12" width="265" height="62" rx="8" fill="#ffffff" stroke="#0c2d83" stroke-width="1.8"/>
+        <text x="962" y="34" text-anchor="middle" font-weight="700" font-size="12" fill="#0c2d83">BRIDGE: ObservationThemes</text>
+        <text x="962" y="54" text-anchor="middle" font-size="11" fill="#475569">ItemID (FK) ↔ 10-Theme Keyword Engine</text>
+        <line x1="760" y1="45" x2="826" y2="45" stroke="#1d4ed8" stroke-width="2" marker-start="url(#arr)" marker-end="url(#arr)"/>
+
+        <!-- Bridge: References -->
+        <rect x="830" y="88" width="265" height="62" rx="8" fill="#ffffff" stroke="#0c2d83" stroke-width="1.8"/>
+        <text x="962" y="110" text-anchor="middle" font-weight="700" font-size="12" fill="#0c2d83">BRIDGE: ObservationReferences</text>
+        <text x="962" y="130" text-anchor="middle" font-size="11" fill="#475569">ItemID (FK) ↔ fnPublications Normalizer</text>
+        <line x1="760" y1="115" x2="826" y2="115" stroke="#1d4ed8" stroke-width="2" marker-start="url(#arr)" marker-end="url(#arr)"/>
+
+        <!-- Dim: Date -->
+        <rect x="530" y="185" width="230" height="96" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+        <text x="645" y="210" text-anchor="middle" font-weight="700" font-size="13" fill="#166534">DIM: Date (Fiscal Calendar)</text>
+        <text x="645" y="232" text-anchor="middle" font-size="11" fill="#1e293b">Date (PK) • Fiscal Year (Oct–Sep)</text>
+        <text x="645" y="250" text-anchor="middle" font-size="11" fill="#1e293b">FY Label • FY Quarter • Sort Keys</text>
+        <line x1="645" y1="185" x2="645" y2="141" stroke="#16a34a" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Fact: StaffActions -->
+        <rect x="830" y="185" width="265" height="96" rx="8" fill="#0f2942" stroke="#0c2d83" stroke-width="2"/>
+        <text x="962" y="209" text-anchor="middle" font-weight="700" font-size="13" fill="#ffffff">FACT: StaffActions</text>
+        <text x="962" y="230" text-anchor="middle" font-size="11" fill="#cbd5e1">SA ID (SA-XXX) • Office Symbol</text>
+        <text x="962" y="248" text-anchor="middle" font-size="11" fill="#cbd5e1">Due Status • Update Status (30d SLA)</text>
+        <text x="962" y="266" text-anchor="middle" font-size="10" fill="#93c5fd">Days Open • 180-Day Follow-Up Gate</text>
+        <line x1="760" y1="233" x2="826" y2="233" stroke="#16a34a" stroke-width="2" marker-end="url(#arr)"/>
+
+        <!-- Excel Companion Note -->
+        <rect x="16" y="185" width="474" height="96" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.8"/>
+        <text x="253" y="210" text-anchor="middle" font-weight="700" font-size="13" fill="#854d0e">Zero-VBA Excel Automation Companions</text>
+        <text x="253" y="232" text-anchor="middle" font-size="11" fill="#334155">• Site Leave-Behind Generator: Reads tblVisitFilter, strips internal nominations,</text>
+        <text x="253" y="249" text-anchor="middle" font-size="11" fill="#334155">  separates Best Practices from HQ Staff Actions, auto-sorts 3 out-brief charts</text>
+        <text x="253" y="267" text-anchor="middle" font-size="11" fill="#334155">• HQ Executive Reference: Baked SharePoint Power Queries + Slicer-reactive KPIs</text>
+      </svg>
+    </div>
+
+    <div class="card">
+      <h2>Live Non-Attribution Firewall Sandbox (Type Synthetic Text to Test Redaction)</h2>
+      <div class="subtitle">Mirrors the token-level scrubber built in Power Query M (<code>03_fnSanitize_Firewall.m</code>)</div>
+      <div class="sandbox-grid">
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:#475569;">RAW FIELD INPUT (SYNTHETIC EXAMPLE)</label>
+          <textarea id="sbIn" class="sandbox" oninput="runSandbox()">During inspection at Alpha Base, 101st Logistics Readiness Squadron (101 LRS) and 101st MXS/QA had 3 overdue torque wrenches. Supervisor Jane Doe (jane.doe@example.invalid) coordinated immediate quarantine with 101 FW safety office.</textarea>
+        </div>
+        <div>
+          <label style="font-size:0.75rem; font-weight:700; color:#166534;">SCRUBBED ENTERPRISE OUTPUT (SAFE FOR EXECUTIVE BRIEF)</label>
+          <div id="sbOut" class="sandbox-out"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Enterprise Analytics Portfolio Module • 100% Synthetic Data (`ASMT-001`–`ASMT-005`, `[Base Alpha]`–`[Base Echo]`, `XX-26-001`) • Built with vanilla HTML/SVG/JS (zero external CDN dependencies)
+</footer>
+
+<script>
+// 100% SYNTHETIC DATASET — Generated deterministically for portfolio demonstration only
+const FOCUS_AREAS = [
+  "Maintenance Management", "Equipment Management", "Materiel Management",
+  "Training", "Manpower Management", "Infrastructure"
+];
+const ROOT_CAUSES = [
+  "Execution & Supervision", "Process / Guidance Gap",
+  "Resource & External Constraints", "Training / Proficiency", "IT / Data Systems"
+];
+const THEMES = [
+  "Process & Checklist Adherence", "Training, Qualification & SCR", "Documentation & Records",
+  "Tool, CTK & Equipment Control", "Supply, Materiel & Munitions", "Leadership & Oversight",
+  "Safety, FOD & Hazards", "IT Systems", "Manpower & Resourcing", "Facilities & Infrastructure"
+];
+const PROBS = ["Frequent", "Likely", "Occasional", "Unlikely"];
+const SEVS  = ["Severe", "Significant", "Limited", "Minimal"];
+
+function calcRisk(p, s, cat) {
+  if (cat === "Strength / Benchmark") return "N/A";
+  if ((s === "Severe" && ["Frequent","Likely","Occasional"].includes(p)) || (s === "Significant" && p === "Frequent")) return "High";
+  if (s === "Severe" || (s === "Significant" && ["Likely","Occasional"].includes(p)) || (s === "Limited" && ["Frequent","Likely"].includes(p))) return "Moderate";
+  return "Low";
+}
+
+// Deterministic seeded generator producing 180 realistic synthetic observations across ASMT-001..ASMT-005
+const OBS = (function() {
+  let seed = 4219;
+  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+  const pickW = (items, weights) => {
+    const sum = weights.reduce((a,b) => a+b, 0);
+    let r = rnd() * sum;
+    for (let i = 0; i < items.length; i++) { r -= weights[i]; if (r <= 0) return items[i]; }
+    return items[items.length - 1];
+  };
+  const asmts = ["ASMT-001","ASMT-002","ASMT-003","ASMT-004","ASMT-005"];
+  const rows = [];
+  for (let i = 1; i <= 180; i++) {
+    const asmt = pickW(asmts, [18, 26, 21, 16, 19]);
+    const cat  = pickW(["Finding","Improvement Area","Strength / Benchmark"], [67, 17, 16]);
+    const func = pickW(FOCUS_AREAS, [34, 15, 17, 14, 10, 10]);
+    const rc   = cat === "Strength / Benchmark" ? "Strength" : pickW(ROOT_CAUSES, [42, 24, 16, 11, 7]);
+    const prob = cat === "Strength / Benchmark" ? "N/A" : pickW(PROBS, [26, 28, 28, 18]);
+    const sev  = cat === "Strength / Benchmark" ? "N/A" : pickW(SEVS, [19, 31, 30, 20]);
+    const risk = calcRisk(prob, sev, cat);
+    const safety = cat !== "Strength / Benchmark" && (risk === "High" ? rnd() < 0.34 : rnd() < 0.08);
+    const trained = cat !== "Strength / Benchmark" && rnd() < 0.56;
+    const saFlag = cat !== "Strength / Benchmark" && (risk === "High" ? rnd() < 0.24 : rnd() < 0.05);
+    const t1 = pickW(THEMES, [22, 18, 16, 14, 12, 11, 10, 7, 6, 5]);
+    const t2 = rnd() < 0.4 ? pickW(THEMES, [12, 14, 15, 10, 10, 14, 8, 6, 6, 5]) : null;
+    rows.push({
+      id: "LATT-" + String(i).padStart(4, "0"),
+      asmt, cat, func, rc, prob, sev, risk, safety, trained, saFlag,
+      themes: t2 && t2 !== t1 ? [t1, t2] : [t1]
+    });
+  }
+  return rows;
+})();
+
+const STAFF_ACTIONS = [
+  { id:"SA-001", func:"Maintenance Management", office:"HQ-MX", daysOpen:142, due:"Overdue",        upd:"Stale (30+ Days)",       summary:"Standardize digital tool calibration lockout workflow across enterprise maintenance units." },
+  { id:"SA-002", func:"Materiel Management",    office:"HQ-LG", daysOpen:118, due:"Overdue",        upd:"Current",                summary:"Update enterprise supply demand-level policy for critical low-density bench stock items." },
+  { id:"SA-003", func:"Infrastructure",         office:"HQ-CE", daysOpen:96,  due:"Due in 30 Days", upd:"Current",                summary:"Establish interim ventilation PPE guidance for legacy hangar facility renovation delays." },
+  { id:"SA-004", func:"Manpower Management",    office:"HQ-MP", daysOpen:88,  due:"Due in 30 Days", upd:"Awaiting First Update",  summary:"Review cross-leveling thresholds for undermanned 7-level supervisor billets." },
+  { id:"SA-005", func:"Training",               office:"HQ-TR", daysOpen:74,  due:"On Track",       upd:"Current",                summary:"Publish standardized enterprise task-evaluation rubrics for night-shift OJT trainers." },
+  { id:"SA-006", func:"Maintenance Management", office:"HQ-IT", daysOpen:65,  due:"On Track",       upd:"Current",                summary:"Reduce batch sync latency between supply and maintenance IT tracking portals to 15 min." },
+  { id:"SA-007", func:"Equipment Management",   office:"HQ-EQ", daysOpen:52,  due:"On Track",       upd:"Stale (30+ Days)",       summary:"Deploy enterprise barcode custody tracking template for precision calibration assets." },
+  { id:"SA-008", func:"Materiel Management",    office:"HQ-LG", daysOpen:41,  due:"On Track",       upd:"Current",                summary:"Rescind conflicting legacy local supplements on reparable asset turn-in timelines." },
+  { id:"SA-009", func:"Maintenance Management", office:"Unassigned", daysOpen:29, due:"No Target Date", upd:"Awaiting First Update", summary:"Align dual-signature digital verification rule across software test stations." },
+  { id:"SA-010", func:"Training",               office:"HQ-TR", daysOpen:19,  due:"On Track",       upd:"Current",                summary:"Integrate 2-hour reporting data-quality lab into new supervisor onboarding syllabus." },
+  { id:"SA-011", func:"Equipment Management",   office:"HQ-EQ", daysOpen:null,due:"Closed",         upd:"Closed",                 summary:"Issued updated enterprise lost-tool escalation matrix poster replacing 2019 template." },
+  { id:"SA-012", func:"Maintenance Management", office:"HQ-MX", daysOpen:null,due:"Closed",         upd:"Closed",                 summary:"Published standardized shift-turnover digital checklist template to shared portal." },
+  { id:"SA-013", func:"Materiel Management",    office:"HQ-LG", daysOpen:null,due:"Closed",         upd:"Closed",                 summary:"Distributed weatherproof thermal label stock specification for hazardous storage." },
+  { id:"SA-014", func:"Training",               office:"HQ-TR", daysOpen:null,due:"Closed",         upd:"Closed",                 summary:"Deployed automated 45-day certification expiry alert flow across enterprise teams." }
+];
+
+// Populate dropdown slicers
+(function initSlicers() {
+  const sAsmt = document.getElementById("fAsmt");
+  ["ASMT-001","ASMT-002","ASMT-003","ASMT-004","ASMT-005"].forEach(a => {
+    const o = document.createElement("option"); o.value = a; o.textContent = a; sAsmt.appendChild(o);
+  });
+  const sFunc = document.getElementById("fFunc");
+  FOCUS_AREAS.forEach(f => {
+    const o = document.createElement("option"); o.value = f; o.textContent = f; sFunc.appendChild(o);
+  });
+})();
+
+function switchTab(id, btn) {
+  document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  document.getElementById("tab-" + id).classList.add("active");
+  btn.classList.add("active");
+  document.getElementById("globalSlicers").style.display = (id === "arch" || id === "actions") ? "none" : "flex";
+}
+
+function resetFilters() {
+  ["fAsmt","fFunc","fRisk","fCat"].forEach(id => document.getElementById(id).value = "ALL");
+  renderAll();
+}
+
+function getFiltered() {
+  const a = document.getElementById("fAsmt").value;
+  const f = document.getElementById("fFunc").value;
+  const r = document.getElementById("fRisk").value;
+  const c = document.getElementById("fCat").value;
+  return OBS.filter(d =>
+    (a === "ALL" || d.asmt === a) &&
+    (f === "ALL" || d.func === f) &&
+    (r === "ALL" || d.risk === r) &&
+    (c === "ALL" || d.cat === c)
+  );
+}
+
+function renderAll() {
+  const data = getFiltered();
+  const defs = data.filter(d => d.cat !== "Strength / Benchmark");
+  const strs = data.filter(d => d.cat === "Strength / Benchmark");
+  const high = defs.filter(d => d.risk === "High");
+  const mod  = defs.filter(d => d.risk === "Moderate");
+  const low  = defs.filter(d => d.risk === "Low");
+  const top3 = defs.filter(d => (d.sev === "Severe" && ["Frequent","Likely"].includes(d.prob)) || (d.sev === "Significant" && d.prob === "Frequent"));
+  const safety = defs.filter(d => d.safety);
+  const trained = defs.filter(d => d.trained);
+  const saFlags = defs.filter(d => d.saFlag);
+  const asmts = new Set(data.map(d => d.asmt)).size || 1;
+
+  // 1. Dynamic BLUF Strip
+  const faCounts = FOCUS_AREAS.map(f => ({ k: f, n: defs.filter(d => d.func === f).length })).sort((a,b) => b.n - a.n);
+  const rcCounts = ROOT_CAUSES.map(r => ({ k: r, n: defs.filter(d => d.rc === r).length })).sort((a,b) => b.n - a.n);
+  const top2Fa = faCounts.filter(x => x.n > 0).slice(0,2).map(x => `${x.k} (${x.n})`).join(" and ") || "None";
+  const top2Rc = rcCounts.filter(x => x.n > 0).slice(0,2);
+  const top2RcPct = defs.length ? Math.round((top2Rc.reduce((s,x)=>s+x.n,0) / defs.length) * 100) : 0;
+  document.getElementById("blufBox").innerHTML = `
+    <div class="bluf-item"><strong>BLUF 1 — Concentration (Dynamic DAX)</strong>Deficiencies concentrate in ${top2Fa}, averaging ${(defs.length/asmts).toFixed(1)} per assessment.</div>
+    <div class="bluf-item"><strong>BLUF 2 — Root Cause Drivers</strong>Leading root causes: ${top2Rc.map(x=>`${x.k} (${x.n})`).join(" and ") || "None"} — ${top2RcPct}% of classified deficiencies.</div>
+    <div class="bluf-item"><strong>BLUF 3 — Risk &amp; Intervention</strong>${high.length} High-Risk items (${top3.length} in Top-3 critical cells), ${safety.length} safety flags, and ${defs.length ? Math.round(trained.length/defs.length*100) : 0}% trained on-site.</div>
+  `;
+
+  // 2. KPI Cards
+  document.getElementById("overviewKpis").innerHTML = [
+    { lbl: "Total Observations", val: data.length, sub: `${asmts} assessment(s) selected`, cls: "" },
+    { lbl: "Deficiencies", val: defs.length, sub: `${(defs.length/asmts).toFixed(1)} per assessment`, cls: "royal" },
+    { lbl: "All High Risk", val: high.length, sub: `${defs.length ? Math.round(high.length/defs.length*100) : 0}% of deficiencies`, cls: "red" },
+    { lbl: "Highest Risk (Top 3)", val: top3.length, sub: "Sev/Freq • Sig/Freq • Sev/Like", cls: "red" },
+    { lbl: "Trained On-Site", val: trained.length, sub: `${defs.length ? Math.round(trained.length/defs.length*100) : 0}% immediate remediation`, cls: "green" },
+    { lbl: "Strengths & BPs", val: strs.length, sub: `${saFlags.length} elevated to HQ Staff Action`, cls: "amber" }
+  ].map(k => `<div class="kpi-card ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
+
+  // 3. Focus Area Stacked Horizontal Bars (Auto-Sorted Tallest -> Shortest)
+  const faData = FOCUS_AREAS.map(f => {
+    const sub = defs.filter(d => d.func === f);
+    const h = sub.filter(d=>d.risk==="High").length;
+    const m = sub.filter(d=>d.risk==="Moderate").length;
+    const l = sub.filter(d=>d.risk==="Low").length;
+    return { f, h, m, l, tot: h+m+l };
+  }).sort((a,b) => b.tot - a.tot);
+  const maxFa = Math.max(1, ...faData.map(x => x.tot));
+  const bw = 420;
+  let svgFa = `<svg viewBox="0 0 680 ${faData.length * 38 + 18}" width="100%">`;
+  faData.forEach((d, idx) => {
+    const y = 10 + idx * 38;
+    const wH = (d.h / maxFa) * bw, wM = (d.m / maxFa) * bw, wL = (d.l / maxFa) * bw;
+    svgFa += `<text x="195" y="${y + 18}" text-anchor="end" font-size="12" font-weight="600" fill="#1e293b">${d.f}</text>`;
+    svgFa += `<rect x="205" y="${y+3}" width="${bw}" height="22" rx="3" fill="#f1f5f9"/>`;
+    if (wH > 0) svgFa += `<rect x="205" y="${y+3}" width="${wH}" height="22" fill="#dc2626"/>`;
+    if (wM > 0) svgFa += `<rect x="${205+wH}" y="${y+3}" width="${wM}" height="22" fill="#f59e0b"/>`;
+    if (wL > 0) svgFa += `<rect x="${205+wH+wM}" y="${y+3}" width="${wL}" height="22" fill="#16a34a"/>`;
+    svgFa += `<text x="${213+wH+wM+wL}" y="${y+18}" font-size="12" font-weight="700" fill="#0f2942">${d.tot}</text>`;
+  });
+  svgFa += `</svg>`;
+  document.getElementById("svgFocusBars").innerHTML = svgFa;
+
+  // 4. Risk Share Donut
+  const totR = high.length + mod.length + low.length;
+  const r = 74, cx = 125, cy = 110, circ = 2 * Math.PI * r;
+  const segs = [
+    { lbl: "High Risk", n: high.length, c: "#dc2626" },
+    { lbl: "Moderate Risk", n: mod.length, c: "#f59e0b" },
+    { lbl: "Low Risk", n: low.length, c: "#16a34a" }
+  ];
+  let offset = 0, circles = "";
+  segs.forEach(s => {
+    const frac = totR ? s.n / totR : 0;
+    const len = frac * circ;
+    circles += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.c}" stroke-width="28" stroke-dasharray="${len} ${circ - len}" stroke-dashoffset="${-offset}" transform="rotate(-90 ${cx} ${cy})"/>`;
+    offset += len;
+  });
+  let legSvg = segs.map((s, i) => `
+    <rect x="245" y="${62 + i*34}" width="14" height="14" rx="3" fill="${s.c}"/>
+    <text x="266" y="${74 + i*34}" font-size="12.5" font-weight="700" fill="#1e293b">${s.lbl}: ${s.n} (${totR ? Math.round(s.n/totR*100) : 0}%)</text>
+  `).join("");
+  document.getElementById("svgDonut").innerHTML = `
+    <svg viewBox="0 0 440 220" width="100%">
+      ${circles}
+      <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="24" font-weight="800" fill="#0c2d83">${totR}</text>
+      <text x="${cx}" y="${cy + 16}" text-anchor="middle" font-size="11" font-weight="600" fill="#64748b">Assessed</text>
+      ${legSvg}
+    </svg>`;
+
+  // 5. Assessment Trend Vertical Stacked Columns
+  const aKeys = ["ASMT-001","ASMT-002","ASMT-003","ASMT-004","ASMT-005"];
+  const aStats = aKeys.map(a => {
+    const sub = defs.filter(d => d.asmt === a);
+    return { a, h: sub.filter(d=>d.risk==="High").length, m: sub.filter(d=>d.risk==="Moderate").length, l: sub.filter(d=>d.risk==="Low").length, tot: sub.length };
+  });
+  const maxA = Math.max(1, ...aStats.map(x => x.tot));
+  const chartH = 145;
+  let svgA = `<svg viewBox="0 0 900 205" width="100%">`;
+  aStats.forEach((d, i) => {
+    const x = 95 + i * 160, w = 68;
+    const hH = (d.h / maxA) * chartH, hM = (d.m / maxA) * chartH, hL = (d.l / maxA) * chartH;
+    const yL = 165 - hL, yM = yL - hM, yH = yM - hH;
+    svgA += `<rect x="${x}" y="${yL}" width="${w}" height="${hL}" fill="#16a34a"/>`;
+    svgA += `<rect x="${x}" y="${yM}" width="${w}" height="${hM}" fill="#f59e0b"/>`;
+    svgA += `<rect x="${x}" y="${yH}" width="${w}" height="${hH}" fill="#dc2626"/>`;
+    svgA += `<text x="${x+w/2}" y="${yH - 7}" text-anchor="middle" font-size="12" font-weight="800" fill="#0f2942">${d.tot}</text>`;
+    svgA += `<text x="${x+w/2}" y="188" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">${d.a}</text>`;
+  });
+  svgA += `<line x1="40" y1="165" x2="860" y2="165" stroke="#94a3b8" stroke-width="1.5"/></svg>`;
+  document.getElementById("svgAsmtTrend").innerHTML = svgA;
+
+  // 6. 4x4 Operational Risk Matrix
+  let mHtml = `<table class="matrix"><thead><tr><th>Probability \\ Severity</th>${SEVS.map(s=>`<th>${s}</th>`).join("")}<th>Total</th></tr></thead><tbody>`;
+  const colTots = [0,0,0,0];
+  PROBS.forEach(p => {
+    let rowTot = 0;
+    mHtml += `<tr><td class="row-hdr">${p}</td>`;
+    SEVS.forEach((s, si) => {
+      const cnt = defs.filter(d => d.prob === p && d.sev === s).length;
+      rowTot += cnt; colTots[si] += cnt;
+      const lvl = calcRisk(p, s, "Finding");
+      const cls = lvl === "High" ? "m-high" : (lvl === "Moderate" ? "m-mod" : "m-low");
+      mHtml += `<td class="${cls}">${cnt}</td>`;
+    });
+    mHtml += `<td class="m-tot">${rowTot}</td></tr>`;
+  });
+  mHtml += `<tr><td class="row-hdr">Total</td>${colTots.map(t=>`<td class="m-tot">${t}</td>`).join("")}<td class="m-tot">${colTots.reduce((a,b)=>a+b,0)}</td></tr></tbody></table>`;
+  document.getElementById("riskMatrixWrap").innerHTML = mHtml;
+
+  // 7. Root Cause 80/20 Pareto Chart
+  const rcTot = rcCounts.reduce((s,x)=>s+x.n, 0) || 1;
+  const maxRc = Math.max(1, ...rcCounts.map(x => x.n));
+  let cum = 0, pts = [], bars = "";
+  const pH = 155, baseY = 185;
+  rcCounts.forEach((d, i) => {
+    const prevCum = cum / rcTot;
+    cum += d.n;
+    const curCum = cum / rcTot;
+    const isCore = prevCum < 0.8;
+    const x = 55 + i * 105, w = 58;
+    const bh = (d.n / maxRc) * pH;
+    bars += `<rect x="${x}" y="${baseY - bh}" width="${w}" height="${bh}" rx="3" fill="${isCore ? '#1d4ed8' : '#94a3b8'}"/>`;
+    bars += `<text x="${x+w/2}" y="${baseY - bh - 6}" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f2942">${d.n}</text>`;
+    const shortLbl = d.k.length > 14 ? d.k.slice(0,13) + "…" : d.k;
+    bars += `<text x="${x+w/2}" y="${baseY + 18}" text-anchor="middle" font-size="10" font-weight="600" fill="#334155">${shortLbl}</text>`;
+    const py = baseY - curCum * pH;
+    pts.push({ x: x + w/2, y: py, pct: Math.round(curCum*100) });
+  });
+  const y80 = baseY - 0.8 * pH;
+  const poly = pts.map(p => `${p.x},${p.y}`).join(" ");
+  const dots = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4.5" fill="#ea580c" stroke="#fff" stroke-width="1.5"/><text x="${p.x}" y="${p.y - 9}" text-anchor="middle" font-size="10" font-weight="700" fill="#c2410c">${p.pct}%</text>`).join("");
+  document.getElementById("svgPareto").innerHTML = `
+    <svg viewBox="0 0 580 220" width="100%">
+      <line x1="35" y1="${y80}" x2="555" y2="${y80}" stroke="#dc2626" stroke-dasharray="5 4" stroke-width="1.5"/>
+      <text x="552" y="${y80 - 5}" text-anchor="end" font-size="10" font-weight="700" fill="#dc2626">80% Threshold</text>
+      ${bars}
+      <polyline points="${poly}" fill="none" stroke="#ea580c" stroke-width="2.5"/>
+      ${dots}
+      <line x1="35" y1="${baseY}" x2="555" y2="${baseY}" stroke="#94a3b8" stroke-width="1.5"/>
+    </svg>`;
+
+  // 8. Top Themes Horizontal Bar Chart
+  const thStats = THEMES.map(t => ({ t, n: data.filter(d => d.themes.includes(t)).length })).sort((a,b) => b.n - a.n).slice(0,8);
+  const maxTh = Math.max(1, ...thStats.map(x => x.n));
+  let svgTh = `<svg viewBox="0 0 920 ${thStats.length * 32 + 10}" width="100%">`;
+  thStats.forEach((d, i) => {
+    const y = 8 + i * 32, bw2 = (d.n / maxTh) * 560;
+    svgTh += `<text x="245" y="${y+16}" text-anchor="end" font-size="12" font-weight="600" fill="#1e293b">${d.t}</text>`;
+    svgTh += `<rect x="255" y="${y+3}" width="560" height="18" rx="3" fill="#f1f5f9"/>`;
+    svgTh += `<rect x="255" y="${y+3}" width="${bw2}" height="18" rx="3" fill="#0c2d83"/>`;
+    svgTh += `<text x="${263+bw2}" y="${y+16}" font-size="11.5" font-weight="700" fill="#0c2d83">${d.n} (${data.length ? Math.round(d.n/data.length*100) : 0}%)</text>`;
+  });
+  svgTh += `</svg>`;
+  document.getElementById("svgThemes").innerHTML = svgTh;
+}
+
+// Render Staff Action SLA Tab
+(function renderStaffActions() {
+  const open = STAFF_ACTIONS.filter(x => x.due !== "Closed");
+  const closed = STAFF_ACTIONS.filter(x => x.due === "Closed");
+  const overdue = STAFF_ACTIONS.filter(x => x.due === "Overdue");
+  const due30 = STAFF_ACTIONS.filter(x => x.due === "Due in 30 Days");
+  const stale = STAFF_ACTIONS.filter(x => x.upd === "Stale (30+ Days)" || x.upd === "Awaiting First Update");
+  const avgDays = Math.round(open.reduce((s,x)=>s+(x.daysOpen||0),0) / Math.max(1, open.length));
+
+  document.getElementById("saKpis").innerHTML = [
+    { lbl: "Tracked Actions", val: STAFF_ACTIONS.length, sub: "100% synced from field flags", cls: "" },
+    { lbl: "Open Actions", val: open.length, sub: `Avg ${avgDays} days open`, cls: "royal" },
+    { lbl: "Closed %", val: Math.round(closed.length/STAFF_ACTIONS.length*100) + "%", sub: `${closed.length} resolved & verified`, cls: "green" },
+    { lbl: "Overdue Past Target", val: overdue.length, sub: "Requires HQ leadership escalation", cls: "red" },
+    { lbl: "Due in 30 Days", val: due30.length, sub: "Approaching target close gate", cls: "amber" },
+    { lbl: "Stale / No Update", val: stale.length, sub: ">30d stale or awaiting 1st update", cls: "amber" }
+  ].map(k => `<div class="kpi-card ${k.cls}"><div class="kpi-lbl">${k.lbl}</div><div class="kpi-val">${k.val}</div><div class="kpi-sub">${k.sub}</div></div>`).join("");
+
+  const badge = v => {
+    if (v === "Overdue") return `<span class="pill p-red">${v}</span>`;
+    if (v === "Due in 30 Days" || v === "Stale (30+ Days)") return `<span class="pill p-amber">${v}</span>`;
+    if (v === "Awaiting First Update") return `<span class="pill p-peach">${v}</span>`;
+    if (v === "On Track" || v === "Current") return `<span class="pill p-green">${v}</span>`;
+    return `<span class="pill p-grey">${v}</span>`;
+  };
+  document.querySelector("#saTable tbody").innerHTML = STAFF_ACTIONS.map(x => `
+    <tr>
+      <td><strong>${x.id}</strong></td>
+      <td>${x.func}</td>
+      <td><span class="pill ${x.office === 'Unassigned' ? 'p-peach' : 'p-blue'}">${x.office}</span></td>
+      <td>${x.daysOpen === null ? "—" : x.daysOpen + "d"}</td>
+      <td>${badge(x.due)}</td>
+      <td>${badge(x.upd)}</td>
+      <td>${x.summary}</td>
+    </tr>`).join("");
+})();
+
+function runSandbox() {
+  let s = document.getElementById("sbIn").value;
+  s = s.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '<span class="tok">[EMAIL]</span>');
+  s = s.replace(/\b(Alpha|Bravo|Charlie|Delta|Echo)\s+Base\b/gi, '<span class="tok">[INSTALLATION]</span>');
+  s = s.replace(/\b\d{1,4}(?:st|nd|rd|th)?\s+(?:Logistics|Fighter|Maintenance|Operations|Support|Readiness|Munitions|Wing|Group|Squadron)(?:\s+(?:Readiness|Squadron|Wing|Group|Unit))*\b/gi, '<span class="tok">[UNIT]</span>');
+  s = s.replace(/\b\d{1,4}(?:st|nd|rd|th)?\s*(?:FW|WG|MXG|MXS|AMXS|LRS|MUNS|CES|FSS)(?:\/[A-Z0-9&]+)?\b/gi, '<span class="tok">[UNIT]</span>');
+  s = s.replace(/\b(?:Supervisor|Lead|Manager|CMSgt|SMSgt|MSgt|TSgt|SSgt|Capt|Maj|Col|Mr\.|Ms\.)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\b/g, '<span class="tok">[PERSONNEL]</span>');
+  document.getElementById("sbOut").innerHTML = s;
+}
+
+renderAll();
+runSandbox();
+</script>
+</body>
+</html>

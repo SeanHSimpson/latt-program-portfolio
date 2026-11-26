@@ -1,0 +1,156 @@
+table Date
+	lineageTag: 9c53ac63-a3e9-4b0c-9fbf-fbad7d8fe0c9
+	dataCategory: Time
+
+	column Date
+		dataType: dateTime
+		isKey
+		formatString: Long Date
+		lineageTag: cd472d0e-689d-48a3-be43-da5982a5e1ca
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Year
+		dataType: int64
+		formatString: 0
+		lineageTag: 195f622c-398a-4e51-8035-19d9ef16cd47
+		summarizeBy: sum
+		sourceColumn: Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month
+		dataType: int64
+		formatString: 0
+		lineageTag: 67e8d3c6-f9ba-4f96-aa3e-becadbe1a263
+		summarizeBy: sum
+		sourceColumn: Month
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Name'
+		dataType: string
+		lineageTag: bb027d58-2d6d-4d80-8859-e50e9bf2fbac
+		summarizeBy: none
+		sourceColumn: Month Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Start'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: adae11a3-cec3-4ff5-9c76-e4603578f07e
+		summarizeBy: none
+		sourceColumn: Month Start
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Month Label'
+		dataType: string
+		lineageTag: c9173257-141b-40a4-bc34-9a944415e581
+		summarizeBy: none
+		sourceColumn: Month Label
+		sortByColumn: 'Month Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Month Sort'
+		dataType: int64
+		formatString: 0
+		lineageTag: 25959046-6e43-45e6-8634-dca8cd69c098
+		summarizeBy: sum
+		sourceColumn: Month Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fiscal Year'
+		dataType: int64
+		formatString: 0
+		lineageTag: 16d799b7-9d47-41c5-b915-6f24df120ff9
+		summarizeBy: sum
+		sourceColumn: Fiscal Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FY Label'
+		dataType: string
+		lineageTag: d011814b-bf18-4449-91f5-00d9010d9ccb
+		summarizeBy: none
+		sourceColumn: FY Label
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Fiscal Quarter'
+		dataType: int64
+		formatString: 0
+		lineageTag: dacf646f-6835-43f6-9c6d-27e7bbb5df64
+		summarizeBy: sum
+		sourceColumn: Fiscal Quarter
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FY Quarter'
+		dataType: string
+		lineageTag: 4f8bbc23-e706-4dff-beb1-978e739cf8b2
+		summarizeBy: none
+		sourceColumn: FY Quarter
+		sortByColumn: 'FY Quarter Sort'
+
+		changedProperty = SortByColumn
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'FY Quarter Sort'
+		dataType: int64
+		formatString: 0
+		lineageTag: bf5c0f71-b720-4aff-a1cf-2fe74897e751
+		summarizeBy: sum
+		sourceColumn: FY Quarter Sort
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Date = m
+		mode: import
+		source =
+				// ===== QUERY: Date =====  (LOAD) - fiscal calendar (FY starts 1 Oct). Mark as date table in the model.
+				let
+				    Dates = List.RemoveNulls(Observations[Date Found]),
+				    MinD = List.Min(Dates),
+				    MaxD = List.Max({List.Max(Dates), Date.From(DateTime.LocalNow())}),
+				    StartD = #date(if Date.Month(MinD) >= 10 then Date.Year(MinD) else Date.Year(MinD) - 1, 10, 1),
+				    EndD = #date(if Date.Month(MaxD) >= 10 then Date.Year(MaxD) + 1 else Date.Year(MaxD), 9, 30),
+				    DayList = List.Dates(StartD, Duration.Days(EndD - StartD) + 1, #duration(1, 0, 0, 0)),
+				    T = Table.FromList(DayList, Splitter.SplitByNothing(), type table [Date = date]),
+				    AddCols = Table.AddColumn(T, "R", each
+				        let
+				            d = [Date], m = Date.Month(d), y = Date.Year(d),
+				            fy = if m >= 10 then y + 1 else y,
+				            fq = Number.IntegerDivide(Number.Mod(m + 2, 12), 3) + 1
+				        in
+				            [Year = y, Month = m, #"Month Name" = Date.ToText(d, "MMM", "en-US"),
+				             #"Month Start" = Date.StartOfMonth(d), #"Month Label" = Date.ToText(d, "MMM yyyy", "en-US"),
+				             #"Month Sort" = y * 100 + m,
+				             #"Fiscal Year" = fy, #"FY Label" = "FY" & Text.End(Text.From(fy), 2),
+				             #"Fiscal Quarter" = fq, #"FY Quarter" = "FY" & Text.End(Text.From(fy), 2) & " Q" & Text.From(fq),
+				             #"FY Quarter Sort" = fy * 10 + fq]),
+				    Expanded = Table.ExpandRecordColumn(AddCols, "R",
+				        {"Year", "Month", "Month Name", "Month Start", "Month Label", "Month Sort", "Fiscal Year", "FY Label", "Fiscal Quarter", "FY Quarter", "FY Quarter Sort"}),
+				    Typed = Table.TransformColumnTypes(Expanded, {
+				        {"Year", Int64.Type}, {"Month", Int64.Type}, {"Month Name", type text}, {"Month Start", type date},
+				        {"Month Label", type text}, {"Month Sort", Int64.Type}, {"Fiscal Year", Int64.Type}, {"FY Label", type text},
+				        {"Fiscal Quarter", Int64.Type}, {"FY Quarter", type text}, {"FY Quarter Sort", Int64.Type}})
+				in
+				    Typed
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
